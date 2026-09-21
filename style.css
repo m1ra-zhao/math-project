@@ -219,3 +219,113 @@ body.chinese button span {
 body.chinese #home-page > button:first-of-type {
     margin-top: 151px;
 }
+
+/* =========================
+   WIKI PAGE
+========================= */
+
+.wiki-page {
+    padding-top: 0;
+    text-align: left;
+
+    background: white;
+    background-image: none;
+
+    color: black;
+}
+
+
+/* WIKI TITLE */
+
+.wiki-header {
+    padding: 35px 50px 25px;
+}
+
+.wiki-header h1 {
+    margin: 0;
+
+    color: black;
+    font-family: Minecraft, sans-serif;
+    font-size: 42px;
+
+    text-shadow: none;
+}
+
+
+/* THREE COLUMN LAYOUT */
+
+.wiki-layout {
+    display: grid;
+
+    grid-template-columns: 260px 1fr 260px;
+
+    min-height: calc(100vh - 120px);
+}
+
+
+/* LEFT SIDEBAR */
+
+.wiki-sidebar {
+    grid-column: 1;
+
+    padding: 30px;
+
+    border-right: 1px solid #cccccc;
+}
+
+.wiki-sidebar h2 {
+    margin-top: 0;
+    margin-bottom: 30px;
+
+    color: black;
+    font-family: Minecraft, sans-serif;
+    font-size: 24px;
+
+    text-shadow: none;
+}
+
+.wiki-sidebar a {
+    display: block;
+
+    margin-bottom: 25px;
+
+    color: black;
+    font-family: Minecraft, sans-serif;
+    font-size: 16px;
+
+    text-decoration: none;
+
+    text-shadow: none;
+}
+
+.wiki-sidebar a:hover {
+    color: #666666;
+}
+
+
+/* CENTER */
+
+.wiki-main {
+    grid-column: 2;
+
+    padding: 40px 60px;
+}
+
+.wiki-main h2 {
+    margin-top: 0;
+
+    color: black;
+    font-family: Minecraft, sans-serif;
+    font-size: 40px;
+
+    text-shadow: none;
+}
+
+
+/* RIGHT SIDE */
+
+.wiki-right {
+    grid-column: 3;
+
+    border-left: 1px solid #cccccc;
+}
