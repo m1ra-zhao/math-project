@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complex Numbers</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- HOME PAGE -->
+    <div id="home-page">
+
+        <h1>COMPLEX NUMBERS</h1>
+
+        <button onclick="showPage('learn-page')">
+            <span>LEARN</span>
+        </button>
+
+        <button onclick="showPage('game-page')">
+            <span>GAME</span>
+        </button>
+
+       <div class="language-button">
+
+    <button onclick="toggleLanguageMenu()">
+        <img src="language copy.png">
+    </button>
+
+    <div id="language-menu">
+
+    <div class="language-title">LANGUAGE</div>
+
+    <div class="language-option english-option" onclick="changeLanguage('en')">
+    English (US)
+    </div>
+
+    <div class="language-option chinese-option" onclick="changeLanguage('zh')">
+    简体中文（未完成）
+    </div>
+
+</div>
+
+</div>
+
+        <div class="small-buttons">
+
+            <button onclick="showPage('options-page')">
+                <span>OPTIONS</span>
+            </button>
+
+            <button onclick="quitPage()">
+                <span>QUIT</span>
+            </button>
+
+        </div>
+
+        <p class="project-credit">Math Q1 Project by Henry Cai, Harry Liang, Mira Zhao</p>
+
+    </div>
+
+
+    <!-- LEARN PAGE -->
+    <div id="learn-page" style="display: none;">
+
+        <h1>LEARN</h1>
+
+        <p>Complex Numbers</p>
+
+        <button onclick="showPage('home-page')">
+            <span>BACK</span>
+        </button>
+
+    </div>
+
+
+    <!-- GAME PAGE -->
+    <div id="game-page" style="display: none;">
+
+        <h1>GAME</h1>
+
+        <p>Game coming soon...</p>
+
+        <button onclick="showPage('home-page')">
+            <span>BACK</span>
+        </button>
+
+    </div>
+
+
+    <!-- OPTIONS PAGE -->
+    <div id="options-page" style="display: none;">
+
+        <h1>OPTIONS</h1>
+
+        <p>Options coming soon...</p>
+
+        <button onclick="showPage('home-page')">
+            <span>BACK</span>
+        </button>
+
+    </div>
+
+
+    <script>
+
+        function showPage(pageId) {
+
+            document.getElementById("home-page").style.display = "none";
+            document.getElementById("learn-page").style.display = "none";
+            document.getElementById("game-page").style.display = "none";
+            document.getElementById("options-page").style.display = "none";
+
+            document.getElementById(pageId).style.display = "block";
+        }
+
+        document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+
+        document.getElementById("language-menu").style.display = "none";
+
+        showPage("home-page");
+
+    }
+
+});
+
+        function quitPage() {
+
+            window.close();
+
+        }
+
+
+            function toggleLanguageMenu() {
+
+        const menu = document.getElementById("language-menu");
+
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        } else {
+            menu.style.display = "block";
+        }
+
+    }
+
+
+    function changeLanguage(language) {
+
+        if (language === "zh") {
+            document.body.classList.add("chinese");
+        } else {
+            document.body.classList.remove("chinese");
+        }
+
+        if (language === "en") {
+
+            document.querySelector("#home-page h1").textContent = "COMPLEX NUMBERS";
+
+            document.querySelector("#home-page button:nth-of-type(1) span").textContent = "LEARN";
+            document.querySelector("#home-page button:nth-of-type(2) span").textContent = "GAME";
+
+            document.querySelector(".small-buttons button:nth-of-type(1) span").textContent = "OPTIONS";
+            document.querySelector(".small-buttons button:nth-of-type(2) span").textContent = "QUIT";
+
+            document.querySelector("#home-page p").textContent =
+                "Math Q1 Project by Henry Cai, Harry Liang, Mira Zhao";
+
+        }
+
+        if (language === "zh") {
+
+            document.querySelector("#home-page h1").textContent = "复数";
+
+            document.querySelector("#home-page button:nth-of-type(1) span").textContent = "学习";
+            document.querySelector("#home-page button:nth-of-type(2) span").textContent = "游戏";
+
+            document.querySelector(".small-buttons button:nth-of-type(1) span").textContent = "选项";
+            document.querySelector(".small-buttons button:nth-of-type(2) span").textContent = "退出";
+
+            document.querySelector("#home-page p").textContent =
+                "Math Q1 Project by Henry Cai, Harry Liang, Mira Zhao";
+
+        }
+
+        document.getElementById("language-menu").style.display = "none";
+
+    }
+
+    </script>
+
+</body>
+</html>
