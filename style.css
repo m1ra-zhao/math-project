@@ -287,7 +287,7 @@ body.chinese #home-page > button:first-of-type {
 .wiki-sidebar a {
     display: block;
 
-    margin-bottom: 25px;
+    margin-bottom: 0px;
 
     color: black;
     font-family: Minecraft, sans-serif;
@@ -316,7 +316,7 @@ body.chinese #home-page > button:first-of-type {
 
     color: black;
     font-family: Minecraft, sans-serif;
-    font-size: 40px;
+    font-size: 32px;
 
     text-shadow: none;
 }
@@ -328,4 +328,71 @@ body.chinese #home-page > button:first-of-type {
     grid-column: 3;
 
     border-left: 1px solid #cccccc;
+}
+
+/* LINES UNDER HEADINGS */
+
+.wiki-sidebar h2 {
+    padding-bottom: 3px;
+    border-bottom: 1px solid #cccccc;
+}
+
+.wiki-main h2 {
+    padding-bottom: 3px;
+    border-bottom: 1px solid #cccccc;
+}
+
+/* COLLAPSIBLE CONTENTS */
+
+.wiki-sidebar details {
+    margin-bottom: 0px;
+}
+
+.wiki-sidebar summary {
+    list-style: none;
+    position: relative;
+    padding-left: 12px;
+
+    color: black;
+    font-family: Minecraft, sans-serif;
+    font-size: 18px;
+
+    cursor: pointer;
+}
+
+.wiki-sidebar summary::-webkit-details-marker {
+    display: none;
+}
+
+.wiki-sidebar summary::before {
+    content: "▶";
+    position: absolute;
+    left: 0;
+    top: 4px;
+    font-size: 12px;
+}
+
+.wiki-sidebar details[open] summary::before {
+    content: "▼";
+}
+
+.wiki-sidebar .sub-items {
+    margin-left: 22px;
+    margin-top: 8px;
+}
+
+.wiki-sidebar .sub-items a {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #555555;
+    font-family: Minecraft, sans-serif;
+    font-size: 15px;
+
+    text-decoration: none;
+}
+
+.wiki-sidebar .sub-items a:hover {
+    color: black;
 }
