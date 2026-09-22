@@ -349,7 +349,7 @@ body.chinese .home-title {
 /* WIKI TITLE */
 
 .wiki-header {
-    padding: 35px 50px 25px;
+    padding: 3.5vh 5vw 2.5vh;
 }
 
 .wiki-header h1 {
@@ -379,14 +379,14 @@ body.chinese .home-title {
 .wiki-sidebar {
     grid-column: 1;
 
-    padding: 30px;
+    padding: 3vh;
 
     border-right: 1px solid #cccccc;
 }
 
 .wiki-sidebar h2 {
     margin-top: 0;
-    margin-bottom: 30px;
+    margin-bottom: 3vh;
 
     color: black;
     font-family: Minecraft, sans-serif;
@@ -398,10 +398,10 @@ body.chinese .home-title {
 .wiki-sidebar a {
     display: block;
 
-    margin-bottom: 0px;
+    margin-bottom: 0;
 
     color: black;
-    font-family: Arial, sans-serif;
+    font-family: Minecraft, sans-serif;
     font-size: 16px;
 
     text-decoration: none;
@@ -419,7 +419,7 @@ body.chinese .home-title {
 .wiki-main {
     grid-column: 2;
 
-    padding: 40px 60px;
+    padding: 4vh 6vw;
 }
 
 .wiki-main h2 {
@@ -433,7 +433,7 @@ body.chinese .home-title {
 }
 
 .wiki-main p {
-    margin: 16px 0 22px;
+    margin: 1.6vh 0 2.2vh;
 
     color: black;
     font-family: Arial, sans-serif;
@@ -451,7 +451,7 @@ body.chinese .home-title {
 .wiki-main mjx-container,
 .wiki-main .MathJax,
 .wiki-main .MathJax_Display {
-    font-size: 1.35em !important;
+    font-size: 1.1em !important;
     line-height: 1.4;
 }
 
@@ -484,6 +484,8 @@ body.chinese .home-title {
 .wiki-sidebar summary {
     list-style: none;
     position: relative;
+    display: flex;
+    align-items: center;
     padding-left: 12px;
 
     color: black;
@@ -502,7 +504,8 @@ body.chinese .home-title {
     position: absolute;
 
     left: 0;
-    top: 6px;
+    top: calc(0.55em - 0.5vh);
+    transform: none;
 
     width: 0;
     height: 0;
@@ -512,19 +515,19 @@ body.chinese .home-title {
     border-left: 6px solid black;
 }
 
-.wiki-sidebar details[open] summary::before {
-    left: -1px;
-    top: 8px;
+.wiki-sidebar details[open] > summary::before {
+    left: 0;
+    top: calc(0.55em - 0.5vh);
+    transform: rotate(90deg);
 
-    border-top: 6px solid black;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: none;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 6px solid black;
 }
 
 .wiki-sidebar .sub-items {
-    margin-left: 22px;
-    margin-top: 0px;
+    margin-left: 2.2vh;
+    margin-top: 0;
 }
 
 .wiki-sidebar .sub-items a {
@@ -532,24 +535,61 @@ body.chinese .home-title {
 
     margin-bottom: 0px;
 
-    color: #555555;
-    font-family: Arial, sans-serif;
+    color: #5a5a5a;
+    font-family: Minecraft, sans-serif;
     font-size: 15px;
 
     text-decoration: none;
+}
+
+.wiki-sidebar .nested-sub-items a {
+    color: #2f6f9f;
 }
 
 .wiki-sidebar .sub-items a:hover {
     color: black;
 }
 
-.wiki-main h3 {
-    margin-top: 20px;
-    margin-bottom: 10px;
+.wiki-sidebar .nested-details {
+    margin-top: 0.8vh;
+}
 
-    color: #555555;
+.wiki-sidebar .nested-details > summary {
+    padding-left: 16px;
+    font-size: 15px;
+    color: #5a5a5a;
+}
+
+.wiki-sidebar .nested-details .nested-sub-items {
+    margin-left: 1.8vh;
+    margin-top: 0.6vh;
+}
+
+.wiki-main h3 {
+    margin-top: 2vh;
+    margin-bottom: 1vh;
+
+    color: #5a5a5a !important;
     font-family: Minecraft, sans-serif;
     font-size: 22px;
 
     text-shadow: none;
+}
+
+.wiki-main h4 {
+    margin-top: 1.2vh;
+    margin-bottom: 0.8vh;
+
+    color: #2f6f9f !important;
+    font-family: Minecraft, sans-serif;
+    font-size: 18px;
+
+    text-shadow: none;
+}
+
+.wiki-main h4[id$="addition"],
+.wiki-main h4[id$="subtraction"],
+.wiki-main h4[id$="multiplication"],
+.wiki-main h4[id$="division"] {
+    color: #2f6f9f !important;
 }

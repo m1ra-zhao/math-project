@@ -42,7 +42,7 @@
         <summary>What Are Complex Numbers?</summary>
 
         <div class="sub-items">
-            <a href="#complex-numbers">Introduction</a>
+            <a href="#introduction">Introduction</a>
             <a href="#imaginary-unit">Imaginary Unit</a>
             <a href="#complex-plane">Complex Plane</a>
         </div>
@@ -52,10 +52,25 @@
         <summary>Operations</summary>
 
         <div class="sub-items">
-            <a href="#operations">Addition</a>
-            <a href="#subtraction">Subtraction</a>
-            <a href="#multiplication">Multiplication</a>
-            <a href="#division">Division</a>
+            <details class="nested-details">
+                <summary>Cartesian Form</summary>
+                <div class="sub-items nested-sub-items">
+                    <a href="#cartesian-form-addition">Addition</a>
+                    <a href="#cartesian-form-subtraction">Subtraction</a>
+                    <a href="#cartesian-form-multiplication">Multiplication</a>
+                    <a href="#cartesian-form-division">Division</a>
+                </div>
+            </details>
+
+            <details class="nested-details">
+                <summary>Trigonometric Form</summary>
+                <div class="sub-items nested-sub-items">
+                    <a href="#trigonometric-form-addition">Addition</a>
+                    <a href="#trigonometric-form-subtraction">Subtraction</a>
+                    <a href="#trigonometric-form-multiplication">Multiplication</a>
+                    <a href="#trigonometric-form-division">Division</a>
+                </div>
+            </details>
         </div>
     </details>
 
@@ -95,7 +110,7 @@
 
             <h2>What Are Complex Numbers?</h2>
 
-            <h3>Introduction</h3>
+            <h3 id="introduction">Introduction</h3>
             <p>
                 A <strong>complex number</strong> is a number that can be expressed in the form
                 \(a + bi\), where \(a\) and \(b\) are real numbers, and \(i\) is the imaginary unit.
@@ -103,28 +118,30 @@
                 <strong>imaginary part</strong>.
             </p>
 
-            <h3>Imaginary Unit</h3>
+            <h3 id="imaginary-unit">Imaginary Unit</h3>
             <p>
                 The imaginary unit \(i\) represents \(\sqrt{-1}\), so \(i^2 = -1\).
             </p>
 
-            <h3>Complex Plane</h3>
+            <h3 id="complex-plane">Complex Plane</h3>
             <p>
-                A complex number \(z = a + bi\) can be plotted on the complex plane, where the
-                horizontal \(x\)-axis is the <strong>real axis</strong> and the vertical
-                \(y\)-axis is the <strong>imaginary axis</strong>. Its modulus and argument are
-                given by:
+                Complex plane is composed of three structures: horizontal x-axis is the real axis showing the real part of a complex number; vertical y-axis is the imaginary axis showing the imaginary part of a complex number; origin is the point \((0,0)\) where two axis cross.
             </p>
-            \[
-            r = \sqrt{a^2 + b^2}, \qquad \tan\theta = \frac{b}{a}
-            \]
+            
 
-            <h2>Operations</h2>
+            <h2 id="operations">Operations</h2>
 
-            <h3>Addition</h3>
-            <h3>Subtraction</h3>
-            <h3>Multiplication</h3>
-            <h3>Division</h3>
+            <h3 id="cartesian-form">Cartesian Form</h3>
+            <h4 id="cartesian-form-addition">Addition</h4>
+            <h4 id="cartesian-form-subtraction">Subtraction</h4>
+            <h4 id="cartesian-form-multiplication">Multiplication</h4>
+            <h4 id="cartesian-form-division">Division</h4>
+
+            <h3 id="trigonometric-form">Trigonometric Form</h3>
+            <h4 id="trigonometric-form-addition">Addition</h4>
+            <h4 id="trigonometric-form-subtraction">Subtraction</h4>
+            <h4 id="trigonometric-form-multiplication">Multiplication</h4>
+            <h4 id="trigonometric-form-division">Division</h4>
 
             <h2>De Moivre's Theorem</h2>
 
