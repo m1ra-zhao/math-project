@@ -451,8 +451,56 @@ body.chinese .home-title {
 .wiki-main mjx-container,
 .wiki-main .MathJax,
 .wiki-main .MathJax_Display {
-    font-size: 1.1em !important;
-    line-height: 1.4;
+    font-size: 1.4em !important;
+    line-height: 1.5;
+}
+
+.wiki-main h2 + h3 + p + mjx-container,
+.wiki-main h2 + h3 + p + .MathJax,
+.wiki-main h2 + h3 + p + .MathJax_Display,
+.wiki-main h3[id="introduction"] ~ p mjx-container,
+.wiki-main h3[id="introduction"] ~ p .MathJax,
+.wiki-main h3[id="introduction"] ~ p .MathJax_Display,
+.wiki-main h3[id="imaginary-unit"] ~ p mjx-container,
+.wiki-main h3[id="imaginary-unit"] ~ p .MathJax,
+.wiki-main h3[id="imaginary-unit"] ~ p .MathJax_Display,
+.wiki-main h3[id="complex-plane"] ~ p mjx-container,
+.wiki-main h3[id="complex-plane"] ~ p .MathJax,
+.wiki-main h3[id="complex-plane"] ~ p .MathJax_Display {
+    font-size: 1.2em !important;
+    line-height: 1.5;
+}
+
+.wiki-main .equation-block {
+    margin: 0.8vh 0 1.6vh;
+}
+
+.wiki-main .equation-block mjx-container,
+.wiki-main .equation-block .MathJax,
+.wiki-main .equation-block .MathJax_Display {
+    font-size: 1.4em !important;
+    line-height: 1.5;
+}
+
+.wiki-main .de-moivre-block mjx-container,
+.wiki-main .de-moivre-block .MathJax,
+.wiki-main .de-moivre-block .MathJax_Display {
+    font-size: 1.4em !important;
+    line-height: 1.5;
+}
+
+.wiki-main .trig-form-block mjx-container,
+.wiki-main .trig-form-block .MathJax,
+.wiki-main .trig-form-block .MathJax_Display {
+    font-size: 1.4em !important;
+    line-height: 1.5;
+}
+
+.wiki-main .polar-block mjx-container,
+.wiki-main .polar-block .MathJax,
+.wiki-main .polar-block .MathJax_Display {
+    font-size: 1.4em !important;
+    line-height: 1.5;
 }
 
 /* RIGHT SIDE */
@@ -587,9 +635,16 @@ body.chinese .home-title {
     text-shadow: none;
 }
 
-.wiki-main h4[id$="addition"],
-.wiki-main h4[id$="subtraction"],
-.wiki-main h4[id$="multiplication"],
-.wiki-main h4[id$="division"] {
+.wiki-main h3[id$="addition"],
+.wiki-main h3[id$="subtraction"],
+.wiki-main h3[id$="multiplication"],
+.wiki-main h3[id$="division"],
+.wiki-main h3[id="de-moivre"],
+.wiki-main h3[id="formula"],
+.wiki-main h3[id="powers"],
+.wiki-main h3[id="roots"],
+.wiki-main h3[id="polar-form"],
+.wiki-main h3[id="polar-coordinates"],
+.wiki-main h3[id="polar-equations"] {
     color: #2f6f9f !important;
 }

@@ -55,10 +55,10 @@
             <details class="nested-details">
                 <summary>Cartesian Form</summary>
                 <div class="sub-items nested-sub-items">
-                    <a href="#cartesian-form-addition">Addition</a>
-                    <a href="#cartesian-form-subtraction">Subtraction</a>
-                    <a href="#cartesian-form-multiplication">Multiplication</a>
-                    <a href="#cartesian-form-division">Division</a>
+                    <a href="#addition">Addition</a>
+                    <a href="#subtraction">Subtraction</a>
+                    <a href="#multiplication">Multiplication</a>
+                    <a href="#division">Division</a>
                 </div>
             </details>
 
@@ -90,7 +90,6 @@
         <div class="sub-items">
             <a href="#polar-form">Polar Form</a>
             <a href="#polar-coordinates">Polar Coordinates</a>
-            <a href="#polar-equations">Polar Equations</a>
         </div>
     </details>
 
@@ -132,28 +131,127 @@
             <h2 id="operations">Operations</h2>
 
             <h3 id="cartesian-form">Cartesian Form</h3>
-            <h4 id="cartesian-form-addition">Addition</h4>
-            <h4 id="cartesian-form-subtraction">Subtraction</h4>
-            <h4 id="cartesian-form-multiplication">Multiplication</h4>
-            <h4 id="cartesian-form-division">Division</h4>
+            
+            <h3 id="addition">Addition</h3>
+            <div class="equation-block">
+            \[
+            (a + bi) + (c + di) = (a + c) + i(b + d)
+            \]
+            </div>
+
+            <h3 id="subtraction">Subtraction</h3>
+            <div class="equation-block">
+            \[
+            (a + bi) - (c + di) = (a - c) + i(b - d)
+            \]
+            </div>
+
+            <h3 id="multiplication">Multiplication</h3>
+            <div class="equation-block">
+            \[
+            (a + bi)(c + di) = (ac - bd) + i(ad + bc)
+            \]
+            </div>
+
+            <h3 id="division">Division</h3>
+            <div class="equation-block">
+            \[
+            \frac{a + bi}{c + di} = \frac{(a + bi)(c - di)}{(c + di)(c - di)} = \frac{ac + bd}{c^2 + d^2} + i\frac{bc - ad}{c^2 + d^2}
+            \]
+            </div>
 
             <h3 id="trigonometric-form">Trigonometric Form</h3>
-            <h4 id="trigonometric-form-addition">Addition</h4>
-            <h4 id="trigonometric-form-subtraction">Subtraction</h4>
-            <h4 id="trigonometric-form-multiplication">Multiplication</h4>
-            <h4 id="trigonometric-form-division">Division</h4>
+            <div class="equation-block trig-form-block">
+            \[
+            r = \sqrt{a^2 + b^2}
+            \]
+            </div>
 
-            <h2>De Moivre's Theorem</h2>
+            <div class="equation-block trig-form-block">
+            \[
+            \tan \theta = \frac{b}{a}
+            \]
+            </div>
 
-            <h3>The Formula</h3>
-            <h3>Powers</h3>
-            <h3>Roots</h3>
+            <div class="equation-block trig-form-block">
+            \[
+            z = r i
+            \]
+            </div>
+
+            <h3 id="trigonometric-form-addition">Addition</h3>
+            <div class="equation-block">
+            \[
+            z_1 + z_2 = r_1(\cos\theta_1 + i\sin\theta_1) + r_2(\cos\theta_2 + i\sin\theta_2)
+            \]
+            </div>
+
+            <h3 id="trigonometric-form-subtraction">Subtraction</h3>
+            <div class="equation-block">
+            \[
+            z_1 - z_2 = r_1(\cos\theta_1 + i\sin\theta_1) - r_2(\cos\theta_2 + i\sin\theta_2)
+            \]
+            </div>
+
+            <h3 id="trigonometric-form-multiplication">Multiplication</h3>
+            <div class="equation-block">
+            \[
+            z_1 z_2 = r_1 r_2\big(\cos(\theta_1 + \theta_2) + i\sin(\theta_1 + \theta_2)\big)=r_1r_2cis(\theta_1+\theta_2)
+            \]
+            </div>
+
+            <h3 id="trigonometric-form-division">Division</h3>
+            <div class="equation-block">
+            \[
+            \frac{z_1}{z_2} = \frac{r_1}{r_2}\big(\cos(\theta_1 - \theta_2) + i\sin(\theta_1 - \theta_2)\big)
+            \]
+            </div>
+
+            <h2 id="de-moivre">De Moivre's Theorem</h2>
+
+            <h3 id="formula">The Formula</h3>
+            <div class="equation-block de-moivre-block">
+            \[
+            (\cos\theta + i\sin\theta)^n = \cos(n\theta) + i\sin(n\theta)
+            \]
+            </div>
+
+            <h3 id="powers">Powers</h3>
+            <div class="equation-block de-moivre-block">
+            \[
+            z^n = r^n \left(\cos(n\theta) + i\sin(n\theta)\right)
+            \]
+            </div>
+
+            <h3 id="roots">Roots</h3>
+            <div class="equation-block de-moivre-block">
+            \[
+            z_k = r^{1/n} \left(
+              \cos\frac{\theta + 2k\pi}{n} + i\sin\frac{\theta + 2k\pi}{n}
+            \right), \quad k = 0, 1, 2, \dots, n-1
+            \]
+            </div>
 
             <h2>Polar Equations</h2>
 
-            <h3>Polar Form</h3>
-            <h3>Polar Coordinates</h3>
-            <h3>Polar Equations</h3>
+            <h3 id="polar-form">Polar Form</h3>
+            <div class="equation-block polar-block">
+            \[
+            z = r(\cos\theta + i\sin\theta)
+            \]
+            </div>
+
+            <h3 id="polar-coordinates">Polar Coordinates</h3>
+            <div class="equation-block polar-block">
+            \[
+            x = r\cos\theta, \quad y = r\sin\theta
+            \]
+            </div>
+            <div class="equation-block polar-block">
+            \[
+            r = \sqrt{x^2 + y^2}, \quad \tan\theta = \frac{y}{x}
+            \]
+            </div>
 
             <h2>Extension</h2>
 
