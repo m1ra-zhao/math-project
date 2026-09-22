@@ -32,6 +32,10 @@
         <img src="language copy.png">
     </button>
 
+    <button class="info-button" onclick="toggleInfoMenu()">
+        <img src="info.png">
+    </button>
+
     <div id="language-menu">
 
     <div class="language-title">LANGUAGE</div>
@@ -43,6 +47,20 @@
     <div class="language-option chinese-option" onclick="changeLanguage('zh')">
     简体中文（未完成）
     </div>
+
+</div>
+
+    <div id="info-menu">
+
+    <div class="info-title">Author Contributions</div>
+    <div class="info-contribution">Learning section - Harry Liang</div>
+    <div class="info-contribution">Game section - Henry Cai</div>
+    <div class="info-contribution">Website design - Mira Zhao</div>
+
+    <div class="info-spacer"></div>
+
+    <div class="info-title">AI Usage</div>
+    <div class="info-body">Website coding is assisted by ChatGPT and Visual Studio Code.</div>
 
 </div>
 
@@ -124,6 +142,7 @@
     if (event.key === "Escape") {
 
         document.getElementById("language-menu").style.display = "none";
+        document.getElementById("info-menu").style.display = "none";
 
         showPage("home-page");
 
@@ -133,7 +152,22 @@
 
         function quitPage() {
 
-            window.close();
+            try {
+                if (window.opener) {
+                    window.close();
+                } else {
+                    window.open('', '_self');
+                    window.close();
+                }
+            } catch (error) {
+                console.log('Close failed:', error);
+            }
+
+            try {
+                window.location.href = 'about:blank';
+            } catch (error) {
+                console.log('Redirect fallback failed:', error);
+            }
 
         }
 
@@ -141,6 +175,24 @@
             function toggleLanguageMenu() {
 
         const menu = document.getElementById("language-menu");
+        const infoMenu = document.getElementById("info-menu");
+
+        infoMenu.style.display = "none";
+
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        } else {
+            menu.style.display = "block";
+        }
+
+    }
+
+    function toggleInfoMenu() {
+
+        const menu = document.getElementById("info-menu");
+        const languageMenu = document.getElementById("language-menu");
+
+        languageMenu.style.display = "none";
 
         if (menu.style.display === "block") {
             menu.style.display = "none";
@@ -190,6 +242,7 @@
         }
 
         document.getElementById("language-menu").style.display = "none";
+        document.getElementById("info-menu").style.display = "none";
 
     }
 

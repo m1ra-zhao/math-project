@@ -117,9 +117,9 @@ button {
     align-items: center;
     justify-content: center;
 
-    width: 46.875vw;
+    width: 75vh;
     max-width: 600px;
-    height: 4.69vw;
+    height: 7.5vh;
     max-height: 60px;
     margin: 0 auto 0.6vh;
     padding: 0;
@@ -161,13 +161,13 @@ p {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 1.6vh;
 }
 
 .small-buttons button {
-    width: 23.05vw;
-    max-width: 295px;
-    height: 4.69vw;
+    width: 37.5vh;
+    max-width: 310px;
+    height: 7.5vh;
     max-height: 60px;
     margin: 0;
 
@@ -183,11 +183,18 @@ p {
     border-image-source: url("button_highlighted.png");
 }
 
+.language-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
 .language-button button {
-    width: 60px;
-    height: 60px;
+    width: 7.5vh;
+    height: 7.5vh;
     padding: 0;
-    margin: 10px auto;
+    margin: 10px 0;
 
     background: none;
 
@@ -202,16 +209,22 @@ p {
 }
 
 .language-button img {
-    width: 45px;
-    height: 45px;
+    width: 5.5vh;
+    height: 5.5vh;
 
     object-fit: contain;
     image-rendering: pixelated;
 }
 
+.info-button img {
+    width: 4.8vh;
+    height: 4.8vh;
+}
+
 /* LANGUAGE MENU */
 
-#language-menu {
+#language-menu,
+#info-menu {
     display: none;
 
     position: fixed;
@@ -232,12 +245,36 @@ p {
     box-sizing: border-box;
 }
 
-.language-title {
+.language-title,
+.info-title {
     color: white;
     font-family: Minecraft, sans-serif;
     font-size: 36px;
 
-    margin-bottom: 50px;
+    margin-bottom: 18px;
+}
+
+.info-contribution {
+    color: white;
+    font-family: Minecraft, sans-serif;
+    font-size: 24px;
+    line-height: 1.8;
+    margin: 0 auto 12px;
+    text-shadow: 3px 3px 0px #555555;
+}
+
+.info-spacer {
+    height: 6vh;
+}
+
+.info-body {
+    color: white;
+    font-family: Minecraft, sans-serif;
+    font-size: 22px;
+    line-height: 1.8;
+    margin: 1vh auto 0;
+    text-shadow: 3px 3px 0px #555555;
+    max-width: 90vw;
 }
 
 .language-option {
@@ -349,7 +386,26 @@ body.chinese .home-title {
 /* WIKI TITLE */
 
 .wiki-header {
-    padding: 3.5vh 5vw 2.5vh;
+    padding: 1.8vh 1.3vw 2.5vh;
+}
+
+.wiki-header-top {
+    margin-bottom: 0.4vh;
+}
+
+.wiki-back-link {
+    display: inline-block;
+    color: #2f6fe5;
+    font-family: Minecraft, sans-serif;
+    font-size: 15px;
+    text-decoration: none;
+    text-shadow: none;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.wiki-back-link:hover {
+    color: #1d4fb4;
 }
 
 .wiki-header h1 {
