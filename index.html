@@ -36,6 +36,10 @@
         <img src="info.png">
     </button>
 
+    <button class="social-button" onclick="toggleSocialMenu()">
+        <img src="social_interactions.png">
+    </button>
+
     <div id="language-menu">
 
     <div class="language-title">LANGUAGE</div>
@@ -63,6 +67,51 @@
     <div class="info-body">Website coding is assisted by ChatGPT and Visual Studio Code.</div>
 
 </div>
+
+    <div id="social-menu">
+
+    <div class="info-title">Comments</div>
+
+    <div class="comments-panel">
+        <div class="comments-list" id="comments-list"></div>
+
+        <div class="comment-input-row">
+            <input id="comment-input" type="text" placeholder="Type your comment...">
+            <button id="send-comment-btn" type="button"><span>Send</span></button>
+        </div>
+    </div>
+
+</div>
+
+    <div id="login-modal" class="login-modal">
+        <div class="login-modal-box">
+            <div class="login-title">Log in</div>
+            <div class="login-field-row">
+                <input id="login-email" type="email" placeholder="Email">
+            </div>
+            <div id="signup-userid-row" class="login-field-row" style="display:none;">
+                <input id="login-userid" type="text" placeholder="User ID">
+            </div>
+            <div class="login-field-row">
+                <input id="login-password" type="password" placeholder="Password">
+            </div>
+            <button id="login-submit-btn" type="button"><span>Log in</span></button>
+            <div class="login-signup-line">
+                <span id="switch-to-signup-btn" class="text-link-btn">Sign up</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="id-prompt-overlay">
+        <div class="id-prompt-box">
+            <div class="id-prompt-title">Enter your ID</div>
+            <input id="id-input" type="text" maxlength="20">
+            <div class="id-prompt-actions">
+                <button id="id-submit-btn" type="button"><span>Confirm</span></button>
+                <button id="id-cancel-btn" type="button" class="secondary-btn"><span>Cancel</span></button>
+            </div>
+        </div>
+    </div>
 
 </div>
 
@@ -124,8 +173,20 @@
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
+        const supabaseUrl = "https://mrhcdtaqeintpeoeknlq.supabase.co";
+        const supabaseAnonKey = "sb_publishable_8sB8D4RFrbLVYffhSkqqVQ_XrJdrG0E";
+        const supabaseClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseAnonKey) : null;
+
+        function requireSupabase() {
+            if (!supabaseClient) {
+                alert("Supabase is not ready yet. Please refresh or check the internet connection.");
+                return false;
+            }
+            return true;
+        }
 
         function showPage(pageId) {
 
@@ -143,6 +204,7 @@
 
         document.getElementById("language-menu").style.display = "none";
         document.getElementById("info-menu").style.display = "none";
+        document.getElementById("social-menu").style.display = "none";
 
         showPage("home-page");
 
@@ -191,8 +253,10 @@
 
         const menu = document.getElementById("info-menu");
         const languageMenu = document.getElementById("language-menu");
+        const socialMenu = document.getElementById("social-menu");
 
         languageMenu.style.display = "none";
+        socialMenu.style.display = "none";
 
         if (menu.style.display === "block") {
             menu.style.display = "none";
@@ -201,6 +265,353 @@
         }
 
     }
+
+    function toggleSocialMenu() {
+
+        const menu = document.getElementById("social-menu");
+        const languageMenu = document.getElementById("language-menu");
+        const infoMenu = document.getElementById("info-menu");
+
+        languageMenu.style.display = "none";
+        infoMenu.style.display = "none";
+
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        } else {
+            menu.style.display = "block";
+        }
+
+    }
+
+    const comments = [];
+
+    function setAuthMode(mode) {
+        const loginModal = document.getElementById("login-modal");
+        const title = document.querySelector(".login-title");
+        const submitBtn = document.getElementById("login-submit-btn");
+        const switchBtn = document.getElementById("switch-to-signup-btn");
+        const useridRow = document.getElementById("signup-userid-row");
+        const isLoginMode = mode === "login";
+
+        if (loginModal) loginModal.dataset.authMode = mode;
+        if (title) title.textContent = isLoginMode ? "Log in" : "Sign up";
+        if (submitBtn) submitBtn.innerHTML = isLoginMode ? "<span>Log in</span>" : "<span>Sign up</span>";
+        if (switchBtn) switchBtn.textContent = isLoginMode ? "Sign up" : "Log in";
+        if (useridRow) useridRow.style.display = isLoginMode ? "none" : "block";
+    }
+
+    function getCurrentAuthMode() {
+        const loginModal = document.getElementById("login-modal");
+        const mode = loginModal ? loginModal.dataset.authMode : "login";
+        return mode === "signup" ? "signup" : "login";
+    }
+
+    function showLoginModal() {
+        const loginModal = document.getElementById("login-modal");
+        const socialMenu = document.getElementById("social-menu");
+
+        if (loginModal) loginModal.style.display = "flex";
+        if (socialMenu) socialMenu.style.display = "none";
+    }
+
+    function hideLoginModal() {
+        const loginModal = document.getElementById("login-modal");
+        if (loginModal) loginModal.style.display = "none";
+    }
+
+    async function updateAuthUI() {
+        const socialMenu = document.getElementById("social-menu");
+        const loginModal = document.getElementById("login-modal");
+
+        if (!supabaseClient) {
+            if (socialMenu) socialMenu.style.display = "none";
+            if (loginModal) loginModal.style.display = "flex";
+            return;
+        }
+
+        const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+        const loggedIn = !sessionError && !!(sessionData && sessionData.session && sessionData.session.user);
+
+        if (loggedIn) {
+            if (socialMenu) socialMenu.style.display = "none";
+            if (loginModal) loginModal.style.display = "none";
+            showPage("home-page");
+        } else {
+            if (socialMenu) socialMenu.style.display = "none";
+            if (loginModal) loginModal.style.display = "flex";
+            setAuthMode("login");
+            showPage("home-page");
+        }
+    }
+
+    function buildBeijingTimeLabel(dateValue) {
+        const date = new Date(dateValue);
+        const beijingTime = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+        return beijingTime.toISOString().slice(2, 16).replace("T", " ");
+    }
+
+    async function loadComments() {
+        if (!requireSupabase()) return;
+
+        const { data, error } = await supabaseClient
+            .from("comments")
+            .select("*")
+            .order("created_at", { ascending: false });
+
+        if (error) {
+            console.error("Failed to load comments:", error);
+            return;
+        }
+
+        comments.length = 0;
+        comments.push(...(data || []));
+        renderComments();
+    }
+
+    function renderComments() {
+        const list = document.getElementById("comments-list");
+        if (!list) return;
+
+        list.innerHTML = "";
+
+        comments.forEach((comment) => {
+            const item = document.createElement("div");
+            item.className = "comment-item";
+
+            const meta = document.createElement("div");
+            meta.className = "comment-meta";
+
+            const author = document.createElement("div");
+            author.className = "comment-author";
+            const authorName = comment.display_name || comment.user_name || comment.user_id || comment.id;
+            author.textContent = authorName;
+
+            const time = document.createElement("div");
+            time.className = "comment-time";
+            time.textContent = comment.time || buildBeijingTimeLabel(comment.created_at);
+
+            meta.appendChild(author);
+            meta.appendChild(time);
+
+            const text = document.createElement("div");
+            text.className = "comment-text";
+            text.textContent = comment.text;
+
+            item.appendChild(meta);
+            item.appendChild(text);
+            list.appendChild(item);
+        });
+    }
+
+    function showIdPrompt() {
+        const overlay = document.getElementById("id-prompt-overlay");
+        overlay.style.display = "block";
+        document.getElementById("id-input").focus();
+    }
+
+    function hideIdPrompt() {
+        const overlay = document.getElementById("id-prompt-overlay");
+        overlay.style.display = "none";
+        document.getElementById("id-input").value = "";
+    }
+
+    async function signUpAccount() {
+        if (!requireSupabase()) return;
+
+        const emailInput = document.getElementById("login-email");
+        const passwordInput = document.getElementById("login-password");
+        const userIdInput = document.getElementById("login-userid");
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+        const userId = userIdInput ? userIdInput.value.trim() : "";
+
+        if (!email || !password) {
+            alert("Please enter email and password.");
+            return;
+        }
+
+        if (!userId) {
+            alert("Please enter a User ID.");
+            return;
+        }
+
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    user_id: userId
+                }
+            }
+        });
+
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        const session = data && data.session;
+        if (session) {
+            alert("Account created and signed in successfully.");
+            hideLoginModal();
+            await updateAuthUI();
+            return;
+        }
+
+        const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (!signInError && signInData && signInData.user) {
+            alert("Account created and signed in successfully.");
+            hideLoginModal();
+            await updateAuthUI();
+            return;
+        }
+
+        alert("Account created. Please sign in to continue.");
+        setAuthMode("login");
+        await updateAuthUI();
+    }
+
+    async function signInAccount() {
+        if (!requireSupabase()) return;
+
+        const emailInput = document.getElementById("login-email");
+        const passwordInput = document.getElementById("login-password");
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!email || !password) {
+            alert("Please enter email and password.");
+            return;
+        }
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        alert("Signed in successfully.");
+        hideLoginModal();
+        await updateAuthUI();
+    }
+
+    async function signOutAccount() {
+        if (!requireSupabase()) return;
+
+        const { error } = await supabaseClient.auth.signOut();
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        alert("Signed out.");
+        showLoginModal();
+        await updateAuthUI();
+    }
+
+    async function addComment() {
+        if (!requireSupabase()) return;
+
+        const input = document.getElementById("comment-input");
+        const text = input.value.trim();
+
+        if (!text) {
+            return;
+        }
+
+        const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+
+        if (sessionError || !sessionData.session || !sessionData.session.user) {
+            alert("Please sign up or log in before posting a comment.");
+            showLoginModal();
+            document.getElementById("login-email").focus();
+            return;
+        }
+
+        const now = new Date();
+        const beijingTime = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+        const time = beijingTime.toISOString().slice(2, 16).replace("T", " ");
+        const userMetadata = sessionData.session.user.user_metadata || {};
+        const customUserId = userMetadata.user_id || userMetadata.userid || sessionData.session.user.email.split("@")[0];
+
+        const insertPayload = {
+            user_id: sessionData.session.user.id,
+            text: text,
+            time: time,
+            created_at: now.toISOString()
+        };
+
+        if (customUserId && customUserId !== sessionData.session.user.id) {
+            insertPayload.display_name = customUserId;
+        }
+
+        const { error } = await supabaseClient
+            .from("comments")
+            .insert([insertPayload]);
+
+        if (error) {
+            console.error("Failed to save comment:", error);
+            alert(error.message);
+            return;
+        }
+
+        input.value = "";
+        await loadComments();
+    }
+
+    async function submitCommentWithId() {
+        await addComment();
+    }
+
+    updateAuthUI();
+    loadComments();
+
+    document.getElementById("send-comment-btn").addEventListener("click", addComment);
+    document.getElementById("id-submit-btn").addEventListener("click", submitCommentWithId);
+    document.getElementById("id-cancel-btn").addEventListener("click", hideIdPrompt);
+    document.getElementById("login-submit-btn").addEventListener("click", function() {
+        if (getCurrentAuthMode() === "signup") {
+            signUpAccount();
+        } else {
+            signInAccount();
+        }
+    });
+    document.getElementById("switch-to-signup-btn").addEventListener("click", function() {
+        const isSignUp = getCurrentAuthMode() === "signup";
+        setAuthMode(isSignUp ? "login" : "signup");
+    });
+    document.getElementById("login-email").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            if (getCurrentAuthMode() === "signup") {
+                signUpAccount();
+            } else {
+                signInAccount();
+            }
+        }
+    });
+    document.getElementById("login-password").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            if (getCurrentAuthMode() === "signup") {
+                signUpAccount();
+            } else {
+                signInAccount();
+            }
+        }
+    });
+    document.getElementById("id-input").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            submitCommentWithId();
+        }
+        if (event.key === "Escape") {
+            hideIdPrompt();
+        }
+    });
+    document.getElementById("comment-input").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            addComment();
+        }
+    });
 
 
     function changeLanguage(language) {
@@ -243,6 +654,7 @@
 
         document.getElementById("language-menu").style.display = "none";
         document.getElementById("info-menu").style.display = "none";
+        document.getElementById("social-menu").style.display = "none";
 
     }
 
