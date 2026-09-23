@@ -148,15 +148,35 @@
 
     <!-- GAME PAGE -->
     <div id="game-page" style="display: none;">
+        <div class="game-bg"></div>
+        <div class="game-page-scroll">
+            <h1>Games</h1>
 
-        <h1>GAME</h1>
-
-        <p>Game coming soon...</p>
-
-        <button onclick="showPage('home-page')">
-            <span>BACK</span>
-        </button>
-
+            <button onclick="window.location.href='level1.html'" class="game-level-btn">
+                <span>Level 1</span>
+            </button>
+            <button onclick="showPage('home-page')" class="game-level-btn">
+                <span>Level 2</span>
+            </button>
+            <button onclick="showPage('home-page')" class="game-level-btn">
+                <span>Level 3</span>
+            </button>
+            <button onclick="showPage('home-page')" class="game-level-btn">
+                <span>Level 4</span>
+            </button>
+            <button onclick="showPage('home-page')" class="game-level-btn">
+                <span>Level 5</span>
+            </button>
+            <button onclick="showPage('home-page')" class="game-level-btn">
+                <span>Level 6</span>
+            </button>
+            <button onclick="showPage('home-page')" class="game-level-btn">
+                <span>Level 7</span>
+            </button>
+            <button onclick="showPage('home-page')" class="game-level-btn">
+                <span>Level 8</span>
+            </button>
+        </div>
     </div>
 
 
@@ -189,6 +209,14 @@
         }
 
         function showPage(pageId) {
+
+            if (pageId === "game-page") {
+                document.getElementById("home-page").style.display = "block";
+                document.getElementById("learn-page").style.display = "none";
+                document.getElementById("game-page").style.display = "block";
+                document.getElementById("options-page").style.display = "none";
+                return;
+            }
 
             document.getElementById("home-page").style.display = "none";
             document.getElementById("learn-page").style.display = "none";
@@ -564,7 +592,12 @@
         await addComment();
     }
 
-    updateAuthUI();
+    updateAuthUI().then(() => {
+        if (sessionStorage.getItem('open_game_page') === 'true') {
+            sessionStorage.removeItem('open_game_page');
+            showPage('game-page');
+        }
+    });
     loadComments();
 
     document.getElementById("send-comment-btn").addEventListener("click", addComment);
