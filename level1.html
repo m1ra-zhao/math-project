@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Level 1</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260924">
 </head>
 <body class="level-page">
     <div class="level-page-inner">
         <a class="wiki-back-link" href="index.html">← Back to Home</a>
+        <div id="steve-coord" class="steve-coord-label"></div>
 
         <div id="advancement-toast" class="advancement-toast">
             <img src="advancement.png" alt="" class="advancement-toast-bg">
@@ -30,7 +31,7 @@
         <div id="system-toast" class="system-toast">
             <img src="system.png" alt="" class="system-toast-bg">
             <div class="system-toast-text">
-                <div class="system-toast-line">Go to -7+6i</div>
+                <div class="system-toast-line">Go to z = -7 + 6i</div>
                 <div class="system-toast-line">to unlock a surprise!</div>
             </div>
         </div>
@@ -46,7 +47,6 @@
                 </div>
                 <div id="number-scale" class="number-scale"></div>
                 <img id="steve" class="steve-sprite" src="Steve_JE5.png.webp" alt="Steve">
-                <div id="steve-coord" class="steve-coord-label"></div>
                 <img id="nether-portal" class="nether-portal-sprite" src="Nether_portal.png" alt="Nether Portal">
             </div>
         </div>
@@ -212,7 +212,7 @@
 
             async function persistStateFlag(key) {
                 if (key === IMAGINARY_AXIS_KEY) {
-                    localStorage.setItem(IMAGINARY_AXIS_KEY, 'true');
+                    localStorage.setItem(getLocalStateKey(key), 'true');
                 }
                 if (!supabaseClient || !currentUserId) return;
                 const { error } = await supabaseClient
@@ -231,13 +231,11 @@
                 window.removeEventListener('keydown', revealImaginaryAxis);
             }
 
-            const locallyRevealed = localStorage.getItem(IMAGINARY_AXIS_KEY) === 'true';
-            if (locallyRevealed) {
-                showImaginaryAxis(false);
-                priorlyRevealedResolve(true);
-            }
-
             let currentUserId = null;
+
+            function getLocalStateKey(key) {
+                return currentUserId ? `${currentUserId}:${key}` : key;
+            }
 
             async function getCurrentUserId() {
                 if (!supabaseClient) return null;
@@ -248,13 +246,20 @@
 
             (async () => {
                 currentUserId = await getCurrentUserId();
+                const locallyRevealed = localStorage.getItem(getLocalStateKey(IMAGINARY_AXIS_KEY)) === 'true';
                 const [revealed, seen] = await Promise.all([fetchStateFlag(IMAGINARY_AXIS_KEY), fetchStateFlag(ADVANCEMENT_SEEN_KEY)]);
                 advancementSeen = seen;
                 if (revealed) {
-                    localStorage.setItem(IMAGINARY_AXIS_KEY, 'true');
+                    localStorage.setItem(getLocalStateKey(IMAGINARY_AXIS_KEY), 'true');
                     showImaginaryAxis(false);
                     priorlyRevealedResolve(true);
-                } else if (!locallyRevealed) {
+                } else if (currentUserId) {
+                    window.addEventListener('keydown', revealImaginaryAxis);
+                    priorlyRevealedResolve(false);
+                } else if (locallyRevealed) {
+                    showImaginaryAxis(false);
+                    priorlyRevealedResolve(true);
+                } else {
                     window.addEventListener('keydown', revealImaginaryAxis);
                     priorlyRevealedResolve(false);
                 }
@@ -301,12 +306,9 @@
 
             function updateSteveCoordLabel(totalY) {
                 if (!steveCoordLabel || !steve) return;
-                const labelGap = 14;
-                const labelY = totalY - steve.offsetHeight - labelGap;
-                steveCoordLabel.style.transform = `translate(calc(-50% + ${posX}px), ${labelY}px)`;
                 const real = Math.round(posX / unitPx);
                 const imag = Math.round(-totalY / unitPx);
-                steveCoordLabel.textContent = formatComplexCoord(real, imag);
+                steveCoordLabel.textContent = `z = ${formatComplexCoord(real, imag)}`;
             }
 
             const scrollMargin = 60;

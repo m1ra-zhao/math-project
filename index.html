@@ -201,9 +201,18 @@
                 <span>Reset All</span>
             </button>
 
-            <button onclick="resetLevelProgress()">
+            <button onclick="toggleLevelResetList()">
                 <span>Reset Level</span>
             </button>
+
+            <div id="level-reset-list" class="level-reset-list" style="display: none;">
+                <div id="level-reset-scroll-area" class="level-reset-scroll-area">
+                    <div class="level-reset-item" role="button" tabindex="0" onclick="resetLevelProgress('level1')">Level 1</div>
+                </div>
+                <div id="level-reset-scroll-track" class="level-reset-scroll-track">
+                    <img id="level-reset-scroller" src="scroller.png" alt="" class="level-reset-scroller">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -350,6 +359,47 @@
         document.getElementById("options-page").style.display = "none";
         document.getElementById("reset-progress-page").style.display = "flex";
 
+    }
+
+    function toggleLevelResetList() {
+
+        const list = document.getElementById("level-reset-list");
+        list.style.display = list.style.display === "flex" ? "none" : "flex";
+
+    }
+
+    const levelResetScrollArea = document.getElementById("level-reset-scroll-area");
+    const levelResetScrollTrack = document.getElementById("level-reset-scroll-track");
+    const levelResetScroller = document.getElementById("level-reset-scroller");
+    let levelScrollerDragOffset = 0;
+
+    function syncLevelResetScroller() {
+        if (!levelResetScrollArea || !levelResetScrollTrack || !levelResetScroller) return;
+        const maxScroll = levelResetScrollArea.scrollHeight - levelResetScrollArea.clientHeight;
+        const maxTop = levelResetScrollTrack.clientHeight - levelResetScroller.clientHeight;
+        const ratio = maxScroll > 0 ? levelResetScrollArea.scrollTop / maxScroll : 0;
+        levelResetScroller.style.top = `${Math.max(0, maxTop * ratio)}px`;
+    }
+
+    if (levelResetScrollArea && levelResetScroller) {
+        levelResetScrollArea.addEventListener("scroll", syncLevelResetScroller);
+        levelResetScroller.addEventListener("pointerdown", function(event) {
+            levelScrollerDragOffset = event.clientY - levelResetScroller.getBoundingClientRect().top;
+            levelResetScroller.setPointerCapture(event.pointerId);
+        });
+        levelResetScroller.addEventListener("pointermove", function(event) {
+            if (!levelResetScroller.hasPointerCapture(event.pointerId)) return;
+            const trackRect = levelResetScrollTrack.getBoundingClientRect();
+            const maxTop = levelResetScrollTrack.clientHeight - levelResetScroller.clientHeight;
+            const top = Math.min(Math.max(event.clientY - trackRect.top - levelScrollerDragOffset, 0), maxTop);
+            const maxScroll = levelResetScrollArea.scrollHeight - levelResetScrollArea.clientHeight;
+            levelResetScrollArea.scrollTop = maxTop > 0 ? (top / maxTop) * maxScroll : 0;
+        });
+        levelResetScroller.addEventListener("pointerup", function(event) {
+            if (levelResetScroller.hasPointerCapture(event.pointerId)) {
+                levelResetScroller.releasePointerCapture(event.pointerId);
+            }
+        });
     }
 
     const comments = [];
@@ -617,6 +667,7 @@
     async function resetProgress() {
         localStorage.removeItem("imaginary_axis_revealed");
         localStorage.removeItem("steve_has_jumped");
+        localStorage.removeItem("advancement_toast_seen");
 
         if (supabaseClient) {
             const { data: sessionData } = await supabaseClient.auth.getSession();
@@ -625,20 +676,36 @@
                 : null;
 
             if (userId) {
-                await supabaseClient
+                localStorage.removeItem(`${userId}:imaginary_axis_revealed`);
+                const { error } = await supabaseClient
                     .from("app_state")
-                    .delete()
-                    .in("key", [
-                        `${userId}:imaginary_axis_revealed`,
-                        `${userId}:advancement_toast_seen`
+                    .upsert([
+                        {
+                            key: `${userId}:imaginary_axis_revealed`,
+                            value: false,
+                            updated_at: new Date().toISOString()
+                        },
+                        {
+                            key: `${userId}:advancement_toast_seen`,
+                            value: false,
+                            updated_at: new Date().toISOString()
+                        }
                     ]);
+
+                if (error) {
+                    alert("Unable to reset shared progress. Please try again.");
+                    return;
+                }
             }
         }
 
+        document.getElementById("reset-progress-page").style.display = "none";
+        document.getElementById("options-page").style.display = "block";
         alert("Progress reset.");
     }
 
-    async function resetLevelProgress() {
+    async function resetLevelProgress(levelId) {
+        if (levelId !== "level1") return;
         await resetProgress();
     }
 
