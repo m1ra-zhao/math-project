@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complex Numbers</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260924">
 </head>
 
 <body>
@@ -37,7 +37,7 @@
     </button>
 
     <button class="social-button" onclick="toggleSocialMenu()">
-        <img src="social_interactions.png">
+        <img src="mute_button.png">
     </button>
 
     <div id="language-menu">
@@ -87,7 +87,7 @@
         <div class="login-modal-box">
             <div class="login-title">Log in</div>
             <div class="login-field-row">
-                <input id="login-email" type="email" placeholder="Email">
+                <input id="login-email" type="text" placeholder="Email / User ID">
             </div>
             <div id="signup-userid-row" class="login-field-row" style="display:none;">
                 <input id="login-userid" type="text" placeholder="User ID">
@@ -117,7 +117,7 @@
 
         <div class="small-buttons">
 
-            <button onclick="showPage('options-page')">
+            <button onclick="toggleOptionsMenu()">
                 <span>OPTIONS</span>
             </button>
 
@@ -185,12 +185,26 @@
 
         <h1>OPTIONS</h1>
 
-        <p>Options coming soon...</p>
-
-        <button onclick="showPage('home-page')">
-            <span>BACK</span>
+        <button onclick="showResetProgressPage()">
+            <span>Reset Progress</span>
         </button>
 
+        <button onclick="signOutAccount()">
+            <span>Log out</span>
+        </button>
+
+    </div>
+
+    <div id="reset-progress-page" style="display: none;">
+        <div class="reset-progress-actions">
+            <button onclick="resetProgress()">
+                <span>Reset All</span>
+            </button>
+
+            <button onclick="resetLevelProgress()">
+                <span>Reset Level</span>
+            </button>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -222,6 +236,7 @@
             document.getElementById("learn-page").style.display = "none";
             document.getElementById("game-page").style.display = "none";
             document.getElementById("options-page").style.display = "none";
+            document.getElementById("reset-progress-page").style.display = "none";
 
             document.getElementById(pageId).style.display = "block";
         }
@@ -229,6 +244,13 @@
         document.addEventListener("keydown", function(event) {
 
     if (event.key === "Escape") {
+
+                const resetProgressPage = document.getElementById("reset-progress-page");
+                if (resetProgressPage.style.display === "flex") {
+                    resetProgressPage.style.display = "none";
+                    document.getElementById("options-page").style.display = "block";
+                    return;
+                }
 
         document.getElementById("language-menu").style.display = "none";
         document.getElementById("info-menu").style.display = "none";
@@ -311,6 +333,25 @@
 
     }
 
+    function toggleOptionsMenu() {
+
+        const menu = document.getElementById("options-page");
+
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        } else {
+            menu.style.display = "block";
+        }
+
+    }
+
+    function showResetProgressPage() {
+
+        document.getElementById("options-page").style.display = "none";
+        document.getElementById("reset-progress-page").style.display = "flex";
+
+    }
+
     const comments = [];
 
     function setAuthMode(mode) {
@@ -319,6 +360,7 @@
         const submitBtn = document.getElementById("login-submit-btn");
         const switchBtn = document.getElementById("switch-to-signup-btn");
         const useridRow = document.getElementById("signup-userid-row");
+        const emailInput = document.getElementById("login-email");
         const isLoginMode = mode === "login";
 
         if (loginModal) loginModal.dataset.authMode = mode;
@@ -326,6 +368,7 @@
         if (submitBtn) submitBtn.innerHTML = isLoginMode ? "<span>Log in</span>" : "<span>Sign up</span>";
         if (switchBtn) switchBtn.textContent = isLoginMode ? "Sign up" : "Log in";
         if (useridRow) useridRow.style.display = isLoginMode ? "none" : "block";
+        if (emailInput) emailInput.placeholder = isLoginMode ? "Email / User ID" : "Email";
     }
 
     function getCurrentAuthMode() {
@@ -463,12 +506,29 @@
             return;
         }
 
+        const normalizedUserId = userId.toLowerCase();
+        const { data: existingProfile, error: profileError } = await supabaseClient
+            .from("profiles")
+            .select("id")
+            .eq("username", normalizedUserId)
+            .maybeSingle();
+
+        if (profileError) {
+            alert("Unable to check User ID availability. Please try again.");
+            return;
+        }
+
+        if (existingProfile) {
+            alert("That User ID is already in use.");
+            return;
+        }
+
         const { data, error } = await supabaseClient.auth.signUp({
             email,
             password,
             options: {
                 data: {
-                    user_id: userId
+                    user_id: normalizedUserId
                 }
             }
         });
@@ -504,12 +564,28 @@
 
         const emailInput = document.getElementById("login-email");
         const passwordInput = document.getElementById("login-password");
-        const email = emailInput.value.trim();
+        const identifier = emailInput.value.trim();
         const password = passwordInput.value.trim();
 
-        if (!email || !password) {
-            alert("Please enter email and password.");
+        if (!identifier || !password) {
+            alert("Please enter your Email / User ID and password.");
             return;
+        }
+
+        let email = identifier;
+        if (!identifier.includes("@")) {
+            const { data: profile, error: profileError } = await supabaseClient
+                .from("profiles")
+                .select("email")
+                .eq("username", identifier.toLowerCase())
+                .maybeSingle();
+
+            if (profileError || !profile) {
+                alert("Invalid User ID or password.");
+                return;
+            }
+
+            email = profile.email;
         }
 
         const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
@@ -536,6 +612,34 @@
         alert("Signed out.");
         showLoginModal();
         await updateAuthUI();
+    }
+
+    async function resetProgress() {
+        localStorage.removeItem("imaginary_axis_revealed");
+        localStorage.removeItem("steve_has_jumped");
+
+        if (supabaseClient) {
+            const { data: sessionData } = await supabaseClient.auth.getSession();
+            const userId = sessionData && sessionData.session && sessionData.session.user
+                ? sessionData.session.user.id
+                : null;
+
+            if (userId) {
+                await supabaseClient
+                    .from("app_state")
+                    .delete()
+                    .in("key", [
+                        `${userId}:imaginary_axis_revealed`,
+                        `${userId}:advancement_toast_seen`
+                    ]);
+            }
+        }
+
+        alert("Progress reset.");
+    }
+
+    async function resetLevelProgress() {
+        await resetProgress();
     }
 
     async function addComment() {

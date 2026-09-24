@@ -9,8 +9,7 @@
 }
 
 #home-page,
-#game-page,
-#options-page {
+#game-page {
     position: relative;
 
     width: 100vw;
@@ -264,17 +263,22 @@ p {
     border-image-source: url("button_highlighted.png");
 }
 
+.language-button button:not(.social-button) {
+    width: 6.4vh;
+    height: 6.4vh;
+}
+
 .language-button img {
-    width: 5.5vh;
-    height: 5.5vh;
+    width: 4.69vh;
+    height: 4.69vh;
 
     object-fit: contain;
     image-rendering: pixelated;
 }
 
 .info-button img {
-    width: 4.7vh;
-    height: 4.7vh;
+    width: 4.01vh;
+    height: 4.01vh;
 }
 
 .social-button img {
@@ -282,11 +286,25 @@ p {
     height: 6.4vh;
 }
 
+.language-button .social-button,
+.language-button .social-button:hover {
+    width: 6.4vh;
+    height: 6.4vh;
+    background: none;
+    border: none;
+    border-image: none;
+}
+
+.social-button:hover img {
+    content: url("mute_button_highlighted.png");
+}
+
 /* LANGUAGE MENU */
 
 #language-menu,
 #info-menu,
-#social-menu {
+#social-menu,
+#options-page {
     display: none;
 
     position: fixed;
@@ -305,6 +323,25 @@ p {
     padding-top: 120px;
 
     box-sizing: border-box;
+}
+
+#reset-progress-page {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url("Background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.reset-progress-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5vh;
 }
 
 .login-modal {
