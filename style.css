@@ -326,6 +326,21 @@ p {
     transform: translateY(0.16vh);
 }
 
+.news-button {
+    position: relative;
+}
+
+.news-button .news-badge {
+    position: absolute;
+    top: -0.6vh;
+    right: -0.6vh;
+    width: 1.5vh;
+    height: 1.5vh;
+    object-fit: fill;
+    image-rendering: pixelated;
+    display: none;
+}
+
 .language-button .info-button,
 .language-button .info-button:hover,
 .language-button .news-button,
@@ -629,7 +644,7 @@ p {
 .report-title {
     margin-top: 5vh;
     color: white;
-    font-family: Minecraft, sans-serif;
+    font-family: MinecraftChinese, sans-serif;
     font-size: clamp(42px, 5vw, 72px);
 }
 
@@ -649,10 +664,11 @@ p {
 .report-list {
     width: min(75vh, calc(100vw - 8vw));
     max-width: 600px;
-    height: 28vh;
+    height: 45vh;
     margin: 5vh auto 0;
     overflow-y: auto;
     padding-right: 1vh;
+    padding-bottom: 30vh;
     box-sizing: border-box;
 }
 
@@ -670,9 +686,17 @@ p {
     text-align: left;
 }
 
+.report-item .comment-author {
+    font-family: Minecraft, sans-serif;
+}
+
+.report-item .comment-time {
+    font-family: Arial, sans-serif;
+}
+
 .report-text {
     color: white;
-    font-family: Minecraft, sans-serif;
+    font-family: Arial, sans-serif;
     font-size: clamp(16px, 2vh, 22px);
     line-height: 1.4;
     overflow-wrap: anywhere;
@@ -687,7 +711,7 @@ p {
     border-radius: 0;
     background: rgba(255, 255, 255, 0.1);
     color: white;
-    font-family: Minecraft, sans-serif;
+    font-family: Arial, sans-serif;
     font-size: clamp(16px, 2vh, 22px);
     line-height: 1.4;
     resize: vertical;
@@ -737,6 +761,7 @@ p {
     font-family: Minecraft, sans-serif;
     font-size: clamp(20px, 2.8vh, 30px);
     line-height: 1.5;
+    margin-bottom: 1.5em;
 }
 
 .news-date {

@@ -34,6 +34,7 @@
 
     <button class="news-button" onclick="toggleNewsMenu()">
         <img src="news.png">
+        <img class="news-badge" src="more.png">
     </button>
 
     <button class="social-button" onclick="toggleSocialMenu()">
@@ -76,12 +77,12 @@
         <div class="news-title">What's New</div>
         <div class="news-timeline">
             <div class="news-entry">
-                <div class="news-date">26.9.23</div>
-                <div class="news-update">Added comments system.</div>
+                <div class="news-date">26.9.24</div>
+                <div class="news-update">Updated level 1.<br>Added What's New.<br>Added reset function.<br>Added Report system.</div>
             </div>
             <div class="news-entry">
-                <div class="news-date">26.9.24</div>
-                <div class="news-update">Updated level 1.<br>Added What's New.<br>Added reset function.</div>
+                <div class="news-date">26.9.23</div>
+                <div class="news-update">Added comments system.</div>
             </div>
         </div>
     </div>
@@ -267,6 +268,18 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
+        // 更新日期：每次在 What's New 新增内容时更新这个值
+        const NEWS_UPDATED = "2026-09-24";
+
+        // 初始化：如果用户没读过当前版本的 news，显示 more 徽标
+        (function() {
+            const lastRead = localStorage.getItem("news_read");
+            if (lastRead !== NEWS_UPDATED) {
+                const badge = document.querySelector(".news-badge");
+                if (badge) badge.style.display = "block";
+            }
+        })();
+
         const supabaseUrl = "https://mrhcdtaqeintpeoeknlq.supabase.co";
         const supabaseAnonKey = "sb_publishable_8sB8D4RFrbLVYffhSkqqVQ_XrJdrG0E";
         const supabaseClient = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseAnonKey) : null;
@@ -440,6 +453,9 @@
             menu.style.display = "none";
         } else {
             menu.style.display = "block";
+            // Mark news as read and hide the badge
+            localStorage.setItem("news_read", NEWS_UPDATED);
+            document.querySelector(".news-badge").style.display = "none";
         }
 
     }
@@ -555,6 +571,7 @@
     }
 
     const comments = [];
+    const profileNameMap = {};
     let currentCommentUserId = null;
     let currentCommentDisplayName = null;
 
@@ -648,18 +665,28 @@
     async function loadComments() {
         if (!requireSupabase()) return;
 
-        const { data, error } = await supabaseClient
-            .from("comments")
-            .select("*")
-            .order("created_at", { ascending: false });
+        const [commentsResult, profilesResult] = await Promise.all([
+            supabaseClient
+                .from("comments")
+                .select("*")
+                .order("created_at", { ascending: false }),
+            supabaseClient
+                .from("profiles")
+                .select("id, username")
+        ]);
 
-        if (error) {
-            console.error("Failed to load comments:", error);
+        if (commentsResult.error) {
+            console.error("Failed to load comments:", commentsResult.error);
             return;
         }
 
+        Object.keys(profileNameMap).forEach((key) => delete profileNameMap[key]);
+        (profilesResult.data || []).forEach((profile) => {
+            profileNameMap[profile.id] = profile.username;
+        });
+
         comments.length = 0;
-        comments.push(...(data || []));
+        comments.push(...(commentsResult.data || []));
         renderComments();
         renderBugReports();
     }
@@ -720,7 +747,7 @@
         author.className = "comment-author";
         author.textContent = entry.comment.user_id === currentCommentUserId
             ? currentCommentDisplayName
-            : (entry.comment.display_name || entry.comment.user_name || entry.comment.user_id || entry.comment.id);
+            : (profileNameMap[entry.comment.user_id] || entry.comment.display_name || entry.comment.user_name || entry.comment.user_id || entry.comment.id);
         const time = document.createElement("div");
         time.className = "comment-time";
         time.textContent = entry.comment.time || buildBeijingTimeLabel(entry.comment.created_at);
@@ -763,12 +790,7 @@
                 submitReply(parentId, isReport, input);
             }
         });
-        const send = document.createElement("button");
-        send.type = "button";
-        send.innerHTML = "<span>Send</span>";
-        send.addEventListener("click", () => submitReply(parentId, isReport, input));
         composer.appendChild(input);
-        composer.appendChild(send);
         parentItem.appendChild(composer);
         input.focus();
     }
@@ -809,7 +831,7 @@
         const { data: existingProfile, error: profileError } = await supabaseClient
             .from("profiles")
             .select("id")
-            .ilike("username", normalizedUserId)
+            .ilike("username", normalizedUserId.replace(/[\\%_]/g, (match) => `\\${match}`))
             .maybeSingle();
 
         if (profileError) {
@@ -873,13 +895,14 @@
 
         let email = identifier;
         if (!identifier.includes("@")) {
+            const escapedIdentifier = identifier.replace(/[\\%_]/g, (match) => `\\${match}`);
             const { data: profile, error: profileError } = await supabaseClient
                 .from("profiles")
-                .select("email")
-                .eq("username", identifier.toLowerCase())
+                .select("email, username")
+                .ilike("username", escapedIdentifier)
                 .maybeSingle();
 
-            if (profileError || !profile) {
+            if (profileError || !profile || profile.username.toLowerCase() !== identifier.toLowerCase()) {
                 alert("Invalid User ID or password.");
                 return;
             }
@@ -934,7 +957,7 @@
         const { data: existingProfile, error: lookupError } = await supabaseClient
             .from("profiles")
             .select("id")
-            .ilike("username", username)
+            .ilike("username", username.replace(/[\\%_]/g, (match) => `\\${match}`))
             .maybeSingle();
 
         if (lookupError) {
