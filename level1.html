@@ -268,13 +268,49 @@
             const steve = document.getElementById('steve');
             const STEVE_STANDING_SRC = 'Steve_JE5.png.webp';
             const STEVE_SNEAKING_SRC = 'Sneaking_Steve.png.webp';
+            const STEVE_SPRINTING_SRC = 'Sprinting_Steve.png';
             let isSneaking = false;
+            let isMoving = false;
+            let sprintToggle = false;
+            let sprintInterval = null;
+
+            function updateSteveSprite() {
+                if (!steve) return;
+                if (isSneaking) {
+                    steve.src = STEVE_SNEAKING_SRC;
+                    steve.classList.remove('steve-sprinting');
+                } else if (isMoving) {
+                    steve.src = sprintToggle ? STEVE_SPRINTING_SRC : STEVE_STANDING_SRC;
+                    steve.classList.toggle('steve-sprinting', sprintToggle);
+                } else {
+                    steve.src = STEVE_STANDING_SRC;
+                    steve.classList.remove('steve-sprinting');
+                }
+                steve.classList.toggle('steve-sneaking', isSneaking);
+            }
 
             function setSneaking(sneaking) {
                 if (!steve || isSneaking === sneaking) return;
                 isSneaking = sneaking;
-                steve.src = sneaking ? STEVE_SNEAKING_SRC : STEVE_STANDING_SRC;
-                steve.classList.toggle('steve-sneaking', sneaking);
+                updateSteveSprite();
+            }
+
+            function setMoving(moving) {
+                if (!steve || isMoving === moving) return;
+                isMoving = moving;
+                if (moving && !sprintInterval) {
+                    sprintToggle = true;
+                    sprintInterval = setInterval(() => {
+                        if (!isMoving || isSneaking) return;
+                        sprintToggle = !sprintToggle;
+                        updateSteveSprite();
+                    }, 100);
+                } else if (!moving && sprintInterval) {
+                    clearInterval(sprintInterval);
+                    sprintInterval = null;
+                    sprintToggle = false;
+                }
+                updateSteveSprite();
             }
 
             const STEVE_JUMPED_KEY = 'steve_has_jumped';
@@ -287,13 +323,20 @@
             let jumpOffset = 0;
             let flightUnlocked = localStorage.getItem(STEVE_JUMPED_KEY) === 'true';
             const pressedKeys = new Set();
+            let facingRight = false;
 
             function updateStevePosition() {
                 if (!steve) return;
                 const totalY = posY + jumpOffset;
-                steve.style.transform = `translate(calc(-50% + ${posX}px), ${totalY}px)`;
+                const flip = facingRight ? ' scaleX(-1)' : '';
+                steve.style.transform = `translate(calc(-50% + ${posX}px), ${totalY}px)${flip}`;
                 updateSteveCoordLabel(totalY);
                 followSteveIntoView();
+            }
+
+            function updateFacingDirection() {
+                if (pressedKeys.has('d')) facingRight = true;
+                else if (pressedKeys.has('a')) facingRight = false;
             }
 
             const steveCoordLabel = document.getElementById('steve-coord');
@@ -356,6 +399,8 @@
                 const key = event.key.toLowerCase();
                 if (key === 'a' || key === 'd' || key === 'w' || key === 's') {
                     pressedKeys.add(key);
+                    if (key === 'a' || key === 'd') setMoving(true);
+                    updateFacingDirection();
                 }
                 if (event.key === 'Shift') {
                     setSneaking(true);
@@ -373,6 +418,11 @@
                 const key = event.key.toLowerCase();
                 if (key === 'a' || key === 'd' || key === 'w' || key === 's') {
                     pressedKeys.delete(key);
+                    if (key === 'a' || key === 'd') {
+                        const stillMoving = pressedKeys.has('a') || pressedKeys.has('d');
+                        setMoving(stillMoving);
+                    }
+                    updateFacingDirection();
                 }
                 if (event.key === 'Shift') {
                     setSneaking(false);

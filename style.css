@@ -1450,6 +1450,11 @@ body.chinese .home-title {
     height: 6.5vh;
 }
 
+.steve-sprite.steve-sprinting {
+    height: 8.6vh;
+    object-position: top center;
+}
+
 .win-overlay {
     display: none;
     position: fixed;
