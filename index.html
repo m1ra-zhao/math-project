@@ -10,6 +10,15 @@
 
 <body>
 
+    <!-- SYSTEM TOAST (first-visit notice) -->
+    <div id="system-toast" class="system-toast long-text">
+        <img src="pngs/system.png" alt="" class="system-toast-bg">
+        <div class="system-toast-text">
+            <div class="system-toast-line">Due to some bugs, your userID was changed into lowercase letters.</div>
+            <div class="system-toast-line white-line">You can go to Options-Account Settings to change your ID.</div>
+        </div>
+    </div>
+
     <!-- HOME PAGE -->
     <div id="home-page">
 
@@ -69,7 +78,7 @@
     <div class="info-spacer"></div>
 
     <div class="info-title">AI Usage</div>
-    <div class="info-body">Website coding is assisted by ChatGPT and Visual Studio Code.</div>
+    <div class="info-body">Website coding is assisted by ChatGPT, Claude, Visual Studio Code and TraeCode.</div>
 
 </div>
 
@@ -187,7 +196,7 @@
                 <span>Level 1</span>
                 <span class="level-passed-badge">Passed</span>
             </button>
-            <button onclick="showPage('home-page')" class="game-level-btn">
+            <button id="level2-game-btn" onclick="window.location.href='level2.html'" class="game-level-btn">
                 <span>Level 2</span>
             </button>
             <button onclick="showPage('home-page')" class="game-level-btn">
@@ -278,6 +287,30 @@
                 const badge = document.querySelector(".news-badge");
                 if (badge) badge.style.display = "block";
             }
+        })();
+
+        // 首次访问提示弹窗：点击页面任意处关闭，或 30 秒后自动关闭
+        (function() {
+            const NOTICE_KEY = "lowercase_notice_read";
+            if (localStorage.getItem(NOTICE_KEY) === "1") return;
+
+            const toast = document.getElementById("system-toast");
+            if (!toast) return;
+
+            let dismissed = false;
+            function dismissToast() {
+                if (dismissed) return;
+                dismissed = true;
+                toast.classList.remove("show");
+                localStorage.setItem(NOTICE_KEY, "1");
+                document.removeEventListener("click", dismissToast);
+                clearTimeout(autoHideTimer);
+            }
+
+            const autoHideTimer = setTimeout(dismissToast, 30000);
+            document.addEventListener("click", dismissToast);
+
+            setTimeout(() => toast.classList.add("show"), 400);
         })();
 
         const supabaseUrl = "https://mrhcdtaqeintpeoeknlq.supabase.co";
