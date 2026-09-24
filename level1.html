@@ -12,7 +12,7 @@
         <div id="steve-coord" class="steve-coord-label"></div>
 
         <div id="advancement-toast" class="advancement-toast">
-            <img src="advancement.png" alt="" class="advancement-toast-bg">
+            <img src="pngs/advancement.png" alt="" class="advancement-toast-bg">
             <div class="advancement-toast-text">
                 <div class="advancement-line-title">Advancement Made!</div>
                 <div class="advancement-line-body">Isn't It Imaginary Number?</div>
@@ -20,8 +20,8 @@
         </div>
 
         <div id="tutorial-toast" class="tutorial-toast">
-            <img src="tutorial.png" alt="" class="tutorial-toast-bg">
-            <img src="movement_keys.png" alt="" class="tutorial-toast-icon">
+            <img src="pngs/tutorial.png" alt="" class="tutorial-toast-bg">
+            <img src="pngs/movement_keys.png" alt="" class="tutorial-toast-icon">
             <div class="tutorial-toast-text">
                 <div class="tutorial-line-title">Press A, D to move</div>
                 <div class="tutorial-line-body">Explore more movements!</div>
@@ -29,7 +29,7 @@
         </div>
 
         <div id="system-toast" class="system-toast">
-            <img src="system.png" alt="" class="system-toast-bg">
+            <img src="pngs/system.png" alt="" class="system-toast-bg">
             <div class="system-toast-text">
                 <div class="system-toast-line">Go to z = -7 + 6i</div>
                 <div class="system-toast-line">to unlock a surprise!</div>
@@ -46,8 +46,9 @@
                     <div id="imaginary-scale" class="imaginary-scale"></div>
                 </div>
                 <div id="number-scale" class="number-scale"></div>
-                <img id="steve" class="steve-sprite" src="Steve_JE5.png.webp" alt="Steve">
-                <img id="nether-portal" class="nether-portal-sprite" src="Nether_portal.png" alt="Nether Portal">
+                <img id="steve" class="steve-sprite" src="pngs/Steve_JE5.png.webp" alt="Steve">
+                <img id="steve-run" class="steve-sprite steve-run-img" src="pngs/Sprinting_Steve.png" alt="">
+                <img id="nether-portal" class="nether-portal-sprite" src="pngs/Nether_portal.png" alt="Nether Portal">
             </div>
         </div>
 
@@ -266,9 +267,9 @@
             })();
 
             const steve = document.getElementById('steve');
-            const STEVE_STANDING_SRC = 'Steve_JE5.png.webp';
-            const STEVE_SNEAKING_SRC = 'Sneaking_Steve.png.webp';
-            const STEVE_SPRINTING_SRC = 'Sprinting_Steve.png';
+            const steveRun = document.getElementById('steve-run');
+            const STEVE_STANDING_SRC = 'pngs/Steve_JE5.png.webp';
+            const STEVE_SNEAKING_SRC = 'pngs/Sneaking_Steve.png.webp';
             let isSneaking = false;
             let isMoving = false;
             let sprintToggle = false;
@@ -276,16 +277,9 @@
 
             function updateSteveSprite() {
                 if (!steve) return;
-                if (isSneaking) {
-                    steve.src = STEVE_SNEAKING_SRC;
-                    steve.classList.remove('steve-sprinting');
-                } else if (isMoving) {
-                    steve.src = sprintToggle ? STEVE_SPRINTING_SRC : STEVE_STANDING_SRC;
-                    steve.classList.toggle('steve-sprinting', sprintToggle);
-                } else {
-                    steve.src = STEVE_STANDING_SRC;
-                    steve.classList.remove('steve-sprinting');
-                }
+                const running = isMoving && !isSneaking && sprintToggle;
+                if (steveRun) steveRun.classList.toggle('show', running);
+                steve.src = isSneaking ? STEVE_SNEAKING_SRC : STEVE_STANDING_SRC;
                 steve.classList.toggle('steve-sneaking', isSneaking);
             }
 
@@ -329,7 +323,9 @@
                 if (!steve) return;
                 const totalY = posY + jumpOffset;
                 const flip = facingRight ? ' scaleX(-1)' : '';
-                steve.style.transform = `translate(calc(-50% + ${posX}px), ${totalY}px)${flip}`;
+                const transform = `translate(calc(-50% + ${posX}px), ${totalY}px)${flip}`;
+                steve.style.transform = transform;
+                if (steveRun) steveRun.style.transform = transform;
                 updateSteveCoordLabel(totalY);
                 followSteveIntoView();
             }

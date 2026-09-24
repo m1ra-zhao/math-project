@@ -24,7 +24,7 @@
     flex-direction: column;
     align-items: center;
 
-    background-image: url("Background.jpg");
+    background-image: url("pngs/Background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -115,7 +115,7 @@
 }
 
 body {
-    background-image: url("Background.jpg");
+    background-image: url("pngs/Background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -211,7 +211,7 @@ button {
     font-size: 24px;
     text-shadow: 3px 3px 0px #555555;
 
-    background-image: url("button.png");
+    background-image: url("pngs/button.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     border: none;
@@ -220,7 +220,7 @@ button {
 }
 
 button:hover {
-    background-image: url("button_highlighted.png");
+    background-image: url("pngs/button_highlighted.png");
 }
 
 button:focus,
@@ -264,13 +264,13 @@ p {
     background: none;
 
     border: 3px solid transparent;
-    border-image: url("button.png") 1 fill stretch;
+    border-image: url("pngs/button.png") 1 fill stretch;
 
     image-rendering: pixelated;
 }
 
 .small-buttons button:hover {
-    border-image-source: url("button_highlighted.png");
+    border-image-source: url("pngs/button_highlighted.png");
 }
 
 .language-button {
@@ -289,13 +289,13 @@ p {
     background: none;
 
     border: 3px solid transparent;
-    border-image: url("button.png") 1 fill stretch;
+    border-image: url("pngs/button.png") 1 fill stretch;
 
     image-rendering: pixelated;
 }
 
 .language-button button:hover {
-    border-image-source: url("button_highlighted.png");
+    border-image-source: url("pngs/button_highlighted.png");
 }
 
 .language-button button:not(.social-button) {
@@ -347,7 +347,7 @@ p {
 .language-button .news-button:hover {
     width: 6.4vh;
     height: 6.4vh;
-    background-image: url("mute_button.png");
+    background-image: url("pngs/mute_button.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     border: none;
@@ -356,7 +356,7 @@ p {
 
 .language-button .info-button:hover,
 .language-button .news-button:hover {
-    background-image: url("mute_button_highlighted.png");
+    background-image: url("pngs/mute_button_highlighted.png");
 }
 
 .social-button img {
@@ -374,7 +374,7 @@ p {
 }
 
 .social-button:hover img {
-    content: url("mute_button_highlighted.png");
+    content: url("pngs/mute_button_highlighted.png");
 }
 
 .warning-button img {
@@ -392,7 +392,7 @@ p {
 }
 
 .warning-button:hover img {
-    content: url("warning_button_highlighted.png");
+    content: url("pngs/warning_button_highlighted.png");
 }
 
 /* LANGUAGE MENU */
@@ -453,7 +453,7 @@ p {
     z-index: 1100;
     align-items: center;
     justify-content: center;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url("Background.jpg");
+    background-image: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url("pngs/Background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -952,7 +952,7 @@ p {
     cursor: pointer;
     background: none;
     border: 3px solid transparent;
-    border-image: url("button.png") 1 fill stretch;
+    border-image: url("pngs/button.png") 1 fill stretch;
     image-rendering: pixelated;
 }
 
@@ -1015,7 +1015,7 @@ p {
     cursor: pointer;
     background: none;
     border: 3px solid transparent;
-    border-image: url("button.png") 1 fill stretch;
+    border-image: url("pngs/button.png") 1 fill stretch;
     image-rendering: pixelated;
 }
 
@@ -1028,7 +1028,7 @@ p {
 #id-submit-btn:hover,
 #id-cancel-btn:hover,
 #send-comment-btn:hover {
-    border-image-source: url("button_highlighted.png");
+    border-image-source: url("pngs/button_highlighted.png");
 }
 
 .id-prompt-box {
@@ -1450,9 +1450,14 @@ body.chinese .home-title {
     height: 6.5vh;
 }
 
-.steve-sprite.steve-sprinting {
+.steve-run-img {
+    display: none;
     height: 8.6vh;
     object-position: top center;
+}
+
+.steve-run-img.show {
+    display: block;
 }
 
 .win-overlay {
