@@ -79,6 +79,41 @@
     margin-bottom: 6vh;
 }
 
+.game-level-btn {
+    position: relative;
+}
+
+.level-passed-badge {
+    display: none;
+    position: absolute;
+    right: 0.7vh;
+    bottom: 0.25vh;
+    color: #ffff55;
+    font-family: Minecraft, sans-serif;
+    font-size: 26px;
+    line-height: 1;
+    text-shadow: 2px 2px 0 #555555;
+    transform: rotate(-12deg);
+    transform-origin: bottom right;
+    animation: passed-splash 0.8s infinite alternate;
+}
+
+.game-level-btn.is-passed .level-passed-badge {
+    display: block;
+}
+
+@keyframes passed-splash {
+    from {
+        opacity: 0.7;
+        transform: rotate(-12deg) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: rotate(-12deg) scale(1.05);
+    }
+}
+
 body {
     background-image: url("Background.jpg");
     background-size: cover;
@@ -278,7 +313,35 @@ p {
 
 .info-button img {
     width: 4.01vh;
-    height: 4.01vh;
+    height: 4.21vh;
+    object-fit: fill;
+    transform: translateY(0.2vh);
+}
+
+.news-button img {
+    width: 4.01vh;
+    height: 4.21vh;
+    object-fit: fill;
+    image-rendering: pixelated;
+    transform: translateY(0.16vh);
+}
+
+.language-button .info-button,
+.language-button .info-button:hover,
+.language-button .news-button,
+.language-button .news-button:hover {
+    width: 6.4vh;
+    height: 6.4vh;
+    background-image: url("mute_button.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border: none;
+    border-image: none;
+}
+
+.language-button .info-button:hover,
+.language-button .news-button:hover {
+    background-image: url("mute_button_highlighted.png");
 }
 
 .social-button img {
@@ -299,12 +362,33 @@ p {
     content: url("mute_button_highlighted.png");
 }
 
+.warning-button img {
+    width: 6.4vh;
+    height: 6.4vh;
+}
+
+.language-button .warning-button,
+.language-button .warning-button:hover {
+    width: 6.4vh;
+    height: 6.4vh;
+    background: none;
+    border: none;
+    border-image: none;
+}
+
+.warning-button:hover img {
+    content: url("warning_button_highlighted.png");
+}
+
 /* LANGUAGE MENU */
 
 #language-menu,
 #info-menu,
+#news-menu,
+#report-menu,
 #social-menu,
-#options-page {
+#options-page,
+#account-settings-page {
     display: none;
 
     position: fixed;
@@ -323,6 +407,29 @@ p {
     padding-top: 120px;
 
     box-sizing: border-box;
+}
+
+.account-settings-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5vh;
+    width: min(75vh, calc(100vw - 8vw));
+    max-width: 600px;
+    margin: 7vh auto 0;
+}
+
+#account-userid-input {
+    width: 100%;
+    height: 7.5vh;
+    max-height: 60px;
+    padding: 0 1.5vh;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: Minecraft, sans-serif;
+    font-size: 20px;
 }
 
 #reset-progress-page {
@@ -508,6 +615,144 @@ p {
     margin-bottom: 18px;
 }
 
+.news-title {
+    margin-top: 3vh;
+    color: white;
+    font-family: Minecraft, sans-serif;
+    font-size: clamp(42px, 5vw, 72px);
+}
+
+#report-menu {
+    padding-top: 0;
+}
+
+.report-title {
+    margin-top: 5vh;
+    color: white;
+    font-family: Minecraft, sans-serif;
+    font-size: clamp(42px, 5vw, 72px);
+}
+
+.report-panel {
+    display: flex;
+    flex-direction: column;
+    width: min(75vh, calc(100vw - 8vw));
+    max-width: 600px;
+    position: fixed;
+    left: 50%;
+    bottom: 5vh;
+    margin: 0;
+    transform: translateX(-50%);
+    gap: 2vh;
+}
+
+.report-list {
+    width: min(75vh, calc(100vw - 8vw));
+    max-width: 600px;
+    height: 28vh;
+    margin: 5vh auto 0;
+    overflow-y: auto;
+    padding-right: 1vh;
+    box-sizing: border-box;
+}
+
+.report-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6vh;
+    margin-bottom: 1.5vh;
+    padding: 1.2vh 1.5vh;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.08);
+    box-sizing: border-box;
+    color: white;
+    text-align: left;
+}
+
+.report-text {
+    color: white;
+    font-family: Minecraft, sans-serif;
+    font-size: clamp(16px, 2vh, 22px);
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+#report-input {
+    width: 100%;
+    min-height: 16vh;
+    padding: 1.5vh;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: Minecraft, sans-serif;
+    font-size: clamp(16px, 2vh, 22px);
+    line-height: 1.4;
+    resize: vertical;
+}
+
+#report-input::placeholder {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.report-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5vh;
+    width: 100%;
+}
+
+.report-actions button {
+    flex: 1;
+    width: auto;
+    margin: 0;
+}
+
+#news-menu {
+    padding-top: 0;
+}
+
+.news-timeline {
+    position: relative;
+    width: 100%;
+    margin-top: 7vh;
+}
+
+.news-timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 25vw;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.news-entry {
+    position: relative;
+    min-height: 10vh;
+    color: white;
+    font-family: Minecraft, sans-serif;
+    font-size: clamp(20px, 2.8vh, 30px);
+    line-height: 1.5;
+}
+
+.news-date {
+    position: absolute;
+    top: 0;
+    left: 4vw;
+    width: 19vw;
+    text-align: right;
+}
+
+.news-update {
+    margin-left: 28vw;
+    padding-right: 4vw;
+    text-align: left;
+}
+
 .comments-panel {
     display: flex;
     flex-direction: column;
@@ -574,6 +819,76 @@ p {
     font-size: 18px;
     line-height: 1.5;
     word-break: break-word;
+}
+
+.replyable-item {
+    cursor: pointer;
+}
+
+.reply-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+    padding-left: 14px;
+    box-sizing: border-box;
+}
+
+.reply-item {
+    width: 100%;
+    padding: 2px 0;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.reply-item .comment-author {
+    font-size: 14px;
+}
+
+.reply-item .comment-time {
+    font-size: 10px;
+}
+
+.reply-text {
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.reply-composer {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.reply-composer input {
+    flex: 1;
+    min-width: 0;
+    height: 32px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+.language-button .reply-composer button {
+    width: 78px;
+    height: 28px;
+    margin: 0;
+    color: white;
+    font-size: 13px;
+    text-shadow: 1px 1px 0 #555555;
+}
+
+.reply-composer button span {
+    display: inline-block;
+    top: calc(0.9vh + 2px);
+    transform: none;
 }
 
 .comment-input-row {

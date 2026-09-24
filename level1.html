@@ -408,7 +408,17 @@
             function showWinOverlay() {
                 if (hasWon) return;
                 hasWon = true;
+                persistLevel1Passed();
                 if (winOverlay) winOverlay.classList.add('show');
+            }
+
+            async function persistLevel1Passed() {
+                localStorage.setItem('level1_passed', 'true');
+                if (!supabaseClient || !currentUserId) return;
+                const { error } = await supabaseClient
+                    .from('app_state')
+                    .upsert({ key: `${currentUserId}:level1_passed`, value: true, updated_at: new Date().toISOString() });
+                if (error) console.error('Failed to save Level 1 completion:', error);
             }
 
             function revealPortal() {

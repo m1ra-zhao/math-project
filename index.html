@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complex Numbers</title>
 
-    <link rel="stylesheet" href="style.css?v=20260924">
+    <link rel="stylesheet" href="style.css?v=20260924-2">
 </head>
 
 <body>
@@ -28,16 +28,20 @@
 
        <div class="language-button">
 
-    <button onclick="toggleLanguageMenu()">
-        <img src="language copy.png">
-    </button>
-
     <button class="info-button" onclick="toggleInfoMenu()">
         <img src="info.png">
     </button>
 
+    <button class="news-button" onclick="toggleNewsMenu()">
+        <img src="news.png">
+    </button>
+
     <button class="social-button" onclick="toggleSocialMenu()">
         <img src="mute_button.png">
+    </button>
+
+    <button class="warning-button" type="button" onclick="toggleReportMenu()">
+        <img src="warning_button.png">
     </button>
 
     <div id="language-menu">
@@ -67,6 +71,32 @@
     <div class="info-body">Website coding is assisted by ChatGPT and Visual Studio Code.</div>
 
 </div>
+
+    <div id="news-menu">
+        <div class="news-title">What's New</div>
+        <div class="news-timeline">
+            <div class="news-entry">
+                <div class="news-date">26.9.23</div>
+                <div class="news-update">Added comments system.</div>
+            </div>
+            <div class="news-entry">
+                <div class="news-date">26.9.24</div>
+                <div class="news-update">Updated level 1.<br>Added What's New.<br>Added reset function.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="report-menu">
+        <div class="report-title">Report</div>
+        <div id="report-list" class="report-list"></div>
+        <div class="report-panel">
+            <textarea id="report-input" maxlength="1000" placeholder="Describe the bug..."></textarea>
+            <div class="report-actions">
+                <button id="cancel-report-btn" type="button"><span>Cancel</span></button>
+                <button id="send-report-btn" type="button"><span>Send</span></button>
+            </div>
+        </div>
+    </div>
 
     <div id="social-menu">
 
@@ -152,8 +182,9 @@
         <div class="game-page-scroll">
             <h1>Games</h1>
 
-            <button onclick="window.location.href='level1.html'" class="game-level-btn">
+            <button id="level1-game-btn" onclick="window.location.href='level1.html'" class="game-level-btn">
                 <span>Level 1</span>
+                <span class="level-passed-badge">Passed</span>
             </button>
             <button onclick="showPage('home-page')" class="game-level-btn">
                 <span>Level 2</span>
@@ -184,6 +215,14 @@
     <div id="options-page" style="display: none;">
 
         <h1>OPTIONS</h1>
+
+        <button onclick="toggleLanguageMenu()">
+            <span>Languages</span>
+        </button>
+
+        <button onclick="showAccountSettings()">
+            <span>Account Settings</span>
+        </button>
 
         <button onclick="showResetProgressPage()">
             <span>Reset Progress</span>
@@ -216,6 +255,15 @@
         </div>
     </div>
 
+    <div id="account-settings-page" style="display: none;">
+        <h1>ACCOUNT SETTINGS</h1>
+        <div class="account-settings-panel">
+            <input id="account-userid-input" type="text" maxlength="30" placeholder="User ID">
+            <button id="save-userid-btn" type="button"><span>Save User ID</span></button>
+            <button id="cancel-account-settings-btn" type="button"><span>Cancel</span></button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
@@ -238,6 +286,7 @@
                 document.getElementById("learn-page").style.display = "none";
                 document.getElementById("game-page").style.display = "block";
                 document.getElementById("options-page").style.display = "none";
+                restoreLevel1PassedBadge();
                 return;
             }
 
@@ -246,8 +295,31 @@
             document.getElementById("game-page").style.display = "none";
             document.getElementById("options-page").style.display = "none";
             document.getElementById("reset-progress-page").style.display = "none";
+            document.getElementById("account-settings-page").style.display = "none";
 
             document.getElementById(pageId).style.display = "block";
+        }
+
+        async function restoreLevel1PassedBadge() {
+            const levelButton = document.getElementById("level1-game-btn");
+            if (!levelButton) return;
+
+            let passed = localStorage.getItem("level1_passed") === "true";
+            if (supabaseClient) {
+                const { data: sessionData } = await supabaseClient.auth.getSession();
+                const userId = sessionData?.session?.user?.id;
+                if (userId) {
+                    const { data } = await supabaseClient
+                        .from("app_state")
+                        .select("value")
+                        .eq("key", `${userId}:level1_passed`)
+                        .maybeSingle();
+                    passed = !!(data && data.value);
+                    if (passed) localStorage.setItem("level1_passed", "true");
+                }
+            }
+
+            levelButton.classList.toggle("is-passed", passed);
         }
 
         document.addEventListener("keydown", function(event) {
@@ -261,9 +333,18 @@
                     return;
                 }
 
+                const accountSettingsPage = document.getElementById("account-settings-page");
+                if (accountSettingsPage.style.display === "block") {
+                    accountSettingsPage.style.display = "none";
+                    document.getElementById("options-page").style.display = "block";
+                    return;
+                }
+
         document.getElementById("language-menu").style.display = "none";
         document.getElementById("info-menu").style.display = "none";
         document.getElementById("social-menu").style.display = "none";
+        document.getElementById("news-menu").style.display = "none";
+        document.getElementById("report-menu").style.display = "none";
 
         showPage("home-page");
 
@@ -297,8 +378,10 @@
 
         const menu = document.getElementById("language-menu");
         const infoMenu = document.getElementById("info-menu");
+        const optionsMenu = document.getElementById("options-page");
 
         infoMenu.style.display = "none";
+        optionsMenu.style.display = "none";
 
         if (menu.style.display === "block") {
             menu.style.display = "none";
@@ -342,6 +425,46 @@
 
     }
 
+    function toggleNewsMenu() {
+
+        const menu = document.getElementById("news-menu");
+        const languageMenu = document.getElementById("language-menu");
+        const infoMenu = document.getElementById("info-menu");
+        const socialMenu = document.getElementById("social-menu");
+
+        languageMenu.style.display = "none";
+        infoMenu.style.display = "none";
+        socialMenu.style.display = "none";
+
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        } else {
+            menu.style.display = "block";
+        }
+
+    }
+
+    function toggleReportMenu() {
+
+        const menu = document.getElementById("report-menu");
+        const languageMenu = document.getElementById("language-menu");
+        const infoMenu = document.getElementById("info-menu");
+        const socialMenu = document.getElementById("social-menu");
+        const newsMenu = document.getElementById("news-menu");
+
+        languageMenu.style.display = "none";
+        infoMenu.style.display = "none";
+        socialMenu.style.display = "none";
+        newsMenu.style.display = "none";
+
+        if (menu.style.display === "block") {
+            menu.style.display = "none";
+        } else {
+            menu.style.display = "block";
+        }
+
+    }
+
     function toggleOptionsMenu() {
 
         const menu = document.getElementById("options-page");
@@ -359,6 +482,35 @@
         document.getElementById("options-page").style.display = "none";
         document.getElementById("reset-progress-page").style.display = "flex";
 
+    }
+
+    async function showAccountSettings() {
+        if (!requireSupabase()) return;
+
+        const { data: sessionData } = await supabaseClient.auth.getSession();
+        const user = sessionData?.session?.user;
+        if (!user) {
+            alert("Please sign up or log in before changing your User ID.");
+            showLoginModal();
+            return;
+        }
+
+        const { data: profile } = await supabaseClient
+            .from("profiles")
+            .select("username")
+            .eq("id", user.id)
+            .maybeSingle();
+
+        const input = document.getElementById("account-userid-input");
+        input.value = user.user_metadata?.user_id || profile?.username || "";
+        document.getElementById("options-page").style.display = "none";
+        document.getElementById("account-settings-page").style.display = "block";
+        input.focus();
+    }
+
+    function hideAccountSettings() {
+        document.getElementById("account-settings-page").style.display = "none";
+        document.getElementById("options-page").style.display = "block";
     }
 
     function toggleLevelResetList() {
@@ -403,6 +555,8 @@
     }
 
     const comments = [];
+    let currentCommentUserId = null;
+    let currentCommentDisplayName = null;
 
     function setAuthMode(mode) {
         const loginModal = document.getElementById("login-modal");
@@ -454,10 +608,30 @@
         const loggedIn = !sessionError && !!(sessionData && sessionData.session && sessionData.session.user);
 
         if (loggedIn) {
+            // Fetch fresh user data from server so metadata changes are reflected after refresh
+            const { data: userData } = await supabaseClient.auth.getUser();
+            const user = userData?.user || sessionData.session.user;
+            console.log("[updateAuthUI] cached session user_id =", sessionData.session.user?.user_metadata?.user_id);
+            console.log("[updateAuthUI] getUser user_id =", user?.user_metadata?.user_id);
+            const { data: profile } = await supabaseClient
+                .from("profiles")
+                .select("username")
+                .eq("id", user.id)
+                .maybeSingle();
+            console.log("[updateAuthUI] profiles.username =", profile?.username);
+            currentCommentUserId = user.id;
+            currentCommentDisplayName = user.user_metadata?.user_id || profile?.username || user.email.split("@")[0];
+            console.log("[updateAuthUI] final display name =", currentCommentDisplayName);
+            if (comments.length) {
+                renderComments();
+                renderBugReports();
+            }
             if (socialMenu) socialMenu.style.display = "none";
             if (loginModal) loginModal.style.display = "none";
             showPage("home-page");
         } else {
+            currentCommentUserId = null;
+            currentCommentDisplayName = null;
             if (socialMenu) socialMenu.style.display = "none";
             if (loginModal) loginModal.style.display = "flex";
             setAuthMode("login");
@@ -487,6 +661,7 @@
         comments.length = 0;
         comments.push(...(data || []));
         renderComments();
+        renderBugReports();
     }
 
     function renderComments() {
@@ -494,34 +669,108 @@
         if (!list) return;
 
         list.innerHTML = "";
+        renderDiscussionThread(list, false);
+    }
 
-        comments.forEach((comment) => {
-            const item = document.createElement("div");
-            item.className = "comment-item";
+    function renderBugReports() {
+        const list = document.getElementById("report-list");
+        if (!list) return;
 
-            const meta = document.createElement("div");
-            meta.className = "comment-meta";
+        list.innerHTML = "";
+        renderDiscussionThread(list, true);
+    }
 
-            const author = document.createElement("div");
-            author.className = "comment-author";
-            const authorName = comment.display_name || comment.user_name || comment.user_id || comment.id;
-            author.textContent = authorName;
+    function getDiscussionData(comment) {
+        const reportPrefix = "[Bug Report] ";
+        const isReport = comment.text.startsWith(reportPrefix);
+        const body = isReport ? comment.text.slice(reportPrefix.length) : comment.text;
+        const replyMatch = body.match(/^\[Reply:([^\]]+)\]\s*/);
+        return {
+            comment,
+            isReport,
+            parentId: replyMatch ? replyMatch[1] : null,
+            text: replyMatch ? body.slice(replyMatch[0].length) : (isReport ? `${reportPrefix}${body}` : body)
+        };
+    }
 
-            const time = document.createElement("div");
-            time.className = "comment-time";
-            time.textContent = comment.time || buildBeijingTimeLabel(comment.created_at);
+    function renderDiscussionThread(list, isReport) {
+        const entries = comments.map(getDiscussionData).filter((entry) => entry.isReport === isReport);
+        entries.filter((entry) => !entry.parentId).forEach((entry) => {
+            const item = createDiscussionItem(entry, false);
+            const replies = entries.filter((reply) => reply.parentId === String(entry.comment.id));
 
-            meta.appendChild(author);
-            meta.appendChild(time);
+            if (replies.length) {
+                const replyList = document.createElement("div");
+                replyList.className = "reply-list";
+                replies.forEach((reply) => replyList.appendChild(createDiscussionItem(reply, true)));
+                item.appendChild(replyList);
+            }
 
-            const text = document.createElement("div");
-            text.className = "comment-text";
-            text.textContent = comment.text;
-
-            item.appendChild(meta);
-            item.appendChild(text);
             list.appendChild(item);
         });
+    }
+
+    function createDiscussionItem(entry, isReply) {
+        const item = document.createElement("div");
+        item.className = isReply ? "reply-item" : (entry.isReport ? "report-item" : "comment-item");
+
+        const meta = document.createElement("div");
+        meta.className = "comment-meta";
+        const author = document.createElement("div");
+        author.className = "comment-author";
+        author.textContent = entry.comment.user_id === currentCommentUserId
+            ? currentCommentDisplayName
+            : (entry.comment.display_name || entry.comment.user_name || entry.comment.user_id || entry.comment.id);
+        const time = document.createElement("div");
+        time.className = "comment-time";
+        time.textContent = entry.comment.time || buildBeijingTimeLabel(entry.comment.created_at);
+        meta.appendChild(author);
+        meta.appendChild(time);
+
+        const text = document.createElement("div");
+        text.className = isReply ? "reply-text" : (entry.isReport ? "report-text" : "comment-text");
+        text.textContent = entry.text;
+
+        item.appendChild(meta);
+        item.appendChild(text);
+
+        if (!isReply) {
+            item.classList.add("replyable-item");
+            item.addEventListener("click", (event) => {
+                if (event.target.closest(".reply-composer, .reply-list")) return;
+                toggleReplyComposer(item, entry.comment.id, entry.isReport);
+            });
+        }
+
+        return item;
+    }
+
+    function toggleReplyComposer(parentItem, parentId, isReport) {
+        const existing = parentItem.querySelector(".reply-composer");
+        if (existing) {
+            existing.remove();
+            return;
+        }
+
+        const composer = document.createElement("div");
+        composer.className = "reply-composer";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Write a reply...";
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitReply(parentId, isReport, input);
+            }
+        });
+        const send = document.createElement("button");
+        send.type = "button";
+        send.innerHTML = "<span>Send</span>";
+        send.addEventListener("click", () => submitReply(parentId, isReport, input));
+        composer.appendChild(input);
+        composer.appendChild(send);
+        parentItem.appendChild(composer);
+        input.focus();
     }
 
     function showIdPrompt() {
@@ -556,11 +805,11 @@
             return;
         }
 
-        const normalizedUserId = userId.toLowerCase();
+        const normalizedUserId = userId;
         const { data: existingProfile, error: profileError } = await supabaseClient
             .from("profiles")
             .select("id")
-            .eq("username", normalizedUserId)
+            .ilike("username", normalizedUserId)
             .maybeSingle();
 
         if (profileError) {
@@ -664,10 +913,75 @@
         await updateAuthUI();
     }
 
+    async function saveUserId() {
+        if (!requireSupabase()) return;
+
+        const input = document.getElementById("account-userid-input");
+        const username = input.value.trim();
+        if (!username) {
+            alert("Please enter a User ID.");
+            return;
+        }
+
+        const { data: sessionData } = await supabaseClient.auth.getSession();
+        const user = sessionData?.session?.user;
+        if (!user) {
+            alert("Please sign up or log in before changing your User ID.");
+            showLoginModal();
+            return;
+        }
+
+        const { data: existingProfile, error: lookupError } = await supabaseClient
+            .from("profiles")
+            .select("id")
+            .ilike("username", username)
+            .maybeSingle();
+
+        if (lookupError) {
+            alert("Unable to check User ID availability. Please try again.");
+            return;
+        }
+
+        if (existingProfile && existingProfile.id !== user.id) {
+            alert("That User ID is already in use.");
+            return;
+        }
+
+        const { data: authData, error: authError } = await supabaseClient.auth.updateUser({
+            data: { ...user.user_metadata, user_id: username }
+        });
+
+        if (authError) {
+            alert("Unable to update User ID. Please try again.");
+            return;
+        }
+
+        // Refresh the local session so localStorage reflects the new metadata
+        await supabaseClient.auth.refreshSession();
+
+        const { error: profileError } = await supabaseClient
+            .from("profiles")
+            .update({ username: username })
+            .eq("id", user.id);
+
+        currentCommentUserId = authData.user.id;
+        currentCommentDisplayName = username;
+        renderComments();
+        renderBugReports();
+        hideAccountSettings();
+        if (profileError) {
+            console.error("Failed to sync profile username:", profileError);
+            alert("User ID updated, but profile sync failed. Your new ID will still be kept after refresh.");
+        } else {
+            alert("User ID updated.");
+        }
+    }
+
     async function resetProgress() {
         localStorage.removeItem("imaginary_axis_revealed");
         localStorage.removeItem("steve_has_jumped");
         localStorage.removeItem("advancement_toast_seen");
+        localStorage.removeItem("level1_passed");
 
         if (supabaseClient) {
             const { data: sessionData } = await supabaseClient.auth.getSession();
@@ -687,6 +1001,11 @@
                         },
                         {
                             key: `${userId}:advancement_toast_seen`,
+                            value: false,
+                            updated_at: new Date().toISOString()
+                        },
+                        {
+                            key: `${userId}:level1_passed`,
                             value: false,
                             updated_at: new Date().toISOString()
                         }
@@ -759,6 +1078,97 @@
         await loadComments();
     }
 
+    async function submitReply(parentId, isReport, input) {
+        if (!requireSupabase()) return;
+
+        const replyText = input.value.trim();
+        if (!replyText) return;
+
+        const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+        if (sessionError || !sessionData.session || !sessionData.session.user) {
+            alert("Please sign up or log in before replying.");
+            showLoginModal();
+            document.getElementById("login-email").focus();
+            return;
+        }
+
+        const now = new Date();
+        const beijingTime = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+        const userMetadata = sessionData.session.user.user_metadata || {};
+        const customUserId = userMetadata.user_id || userMetadata.userid || sessionData.session.user.email.split("@")[0];
+        const replyPrefix = `[Reply:${parentId}] ${replyText}`;
+        const insertPayload = {
+            user_id: sessionData.session.user.id,
+            text: isReport ? `[Bug Report] ${replyPrefix}` : replyPrefix,
+            time: beijingTime.toISOString().slice(2, 16).replace("T", " "),
+            created_at: now.toISOString()
+        };
+
+        if (customUserId && customUserId !== sessionData.session.user.id) {
+            insertPayload.display_name = customUserId;
+        }
+
+        const { error } = await supabaseClient.from("comments").insert([insertPayload]);
+        if (error) {
+            console.error("Failed to save reply:", error);
+            alert(error.message);
+            return;
+        }
+
+        await loadComments();
+    }
+
+    async function submitBugReport() {
+        if (!requireSupabase()) return;
+
+        const input = document.getElementById("report-input");
+        const description = input.value.trim();
+        if (!description) return;
+
+        const { data: sessionData, error: sessionError } = await supabaseClient.auth.getSession();
+        if (sessionError || !sessionData.session || !sessionData.session.user) {
+            alert("Please sign up or log in before submitting a report.");
+            showLoginModal();
+            document.getElementById("login-email").focus();
+            return;
+        }
+
+        const now = new Date();
+        const beijingTime = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+        const time = beijingTime.toISOString().slice(2, 16).replace("T", " ");
+        const userMetadata = sessionData.session.user.user_metadata || {};
+        const customUserId = userMetadata.user_id || userMetadata.userid || sessionData.session.user.email.split("@")[0];
+        const insertPayload = {
+            user_id: sessionData.session.user.id,
+            text: `[Bug Report] ${description}`,
+            time: time,
+            created_at: now.toISOString()
+        };
+
+        if (customUserId && customUserId !== sessionData.session.user.id) {
+            insertPayload.display_name = customUserId;
+        }
+
+        const { error } = await supabaseClient
+            .from("comments")
+            .insert([insertPayload]);
+
+        if (error) {
+            console.error("Failed to submit report:", error);
+            alert(error.message);
+            return;
+        }
+
+        input.value = "";
+        await loadComments();
+        alert("Report submitted.");
+    }
+
+    function cancelBugReport() {
+        document.getElementById("report-input").value = "";
+        document.getElementById("report-menu").style.display = "none";
+    }
+
     async function submitCommentWithId() {
         await addComment();
     }
@@ -772,6 +1182,10 @@
     loadComments();
 
     document.getElementById("send-comment-btn").addEventListener("click", addComment);
+    document.getElementById("send-report-btn").addEventListener("click", submitBugReport);
+    document.getElementById("cancel-report-btn").addEventListener("click", cancelBugReport);
+    document.getElementById("save-userid-btn").addEventListener("click", saveUserId);
+    document.getElementById("cancel-account-settings-btn").addEventListener("click", hideAccountSettings);
     document.getElementById("id-submit-btn").addEventListener("click", submitCommentWithId);
     document.getElementById("id-cancel-btn").addEventListener("click", hideIdPrompt);
     document.getElementById("login-submit-btn").addEventListener("click", function() {
