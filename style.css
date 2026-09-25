@@ -1256,6 +1256,11 @@ body.chinese .home-title {
     box-sizing: border-box;
 }
 
+/* Level 2: gray background */
+.level2-page {
+    background: #818181;
+}
+
 .number-line-wrap {
     display: flex;
     align-items: center;
@@ -1271,7 +1276,9 @@ body.chinese .home-title {
     position: relative;
     width: 420vw;
     min-width: 2400px;
-    height: 1500px;
+    /* Tall enough to fit 10 imaginary units above AND below the origin
+       at any viewport width (origin stays at 50%). */
+    height: calc(var(--imaginary-unit, 10.5vw) * 24 + 12vh);
     min-height: 1500px;
 }
 
@@ -1400,6 +1407,174 @@ body.chinese .home-title {
     line-height: 1;
 }
 
+/* Level 2: negative imaginary axis (mirrored copy of the positive one,
+   independently toggleable via .imaginary-axis-visible) */
+.imaginary-axis-neg {
+    top: 50%;
+    bottom: auto;
+}
+
+.imaginary-axis-neg::before {
+    display: none;
+}
+
+.imaginary-axis-neg::after {
+    display: block;
+    bottom: -3.5vh;
+    border-top: 4.3vh solid #111111;
+}
+
+.imaginary-axis-neg .imaginary-label {
+    transform: translateY(calc(50% - 2.7vh + 1.8vh));
+}
+
+/* Level 2: potion at 10 + 5i, hotbar, fly-to-slot animation */
+.potion-sprite {
+    position: absolute;
+    left: calc(50% + var(--imaginary-unit) * 10);
+    bottom: calc(50% + var(--imaginary-unit) * 5);
+    transform: translateX(-50%);
+    height: 7vh;
+    width: auto;
+    z-index: 5;
+}
+
+.potion-sprite.picked {
+    visibility: hidden;
+}
+
+@keyframes potion-glow {
+    0%, 100% {
+        filter: drop-shadow(0 0 0.8vh rgba(255, 200, 60, 0.85));
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        filter: drop-shadow(0 0 2.2vh rgba(255, 220, 90, 1));
+        transform: translateX(-50%) scale(1.15);
+    }
+}
+
+.potion-sprite:not(.picked) {
+    animation: potion-glow 1.2s ease-in-out infinite;
+}
+
+.hotbar {
+    position: fixed;
+    left: 50%;
+    bottom: 1.5vh;
+    transform: translateX(-50%);
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 40;
+}
+
+.hotbar.show {
+    opacity: 1;
+}
+
+.hotbar-slot {
+    position: relative;
+    height: 9vh;
+}
+
+.hotbar-slot img {
+    display: block;
+    height: 100%;
+    width: auto;
+    image-rendering: pixelated;
+}
+
+.hotbar-slot .potion-in-slot,
+.hotbar-slot .snow-in-slot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    visibility: hidden;
+}
+
+.hotbar-slot .potion-in-slot {
+    height: 68%;
+}
+
+/* Snowflake icon twice as large */
+.hotbar-slot .snow-in-slot {
+    height: 136%;
+}
+
+.hotbar-slot .potion-in-slot.show,
+.hotbar-slot .snow-in-slot.show {
+    visibility: visible;
+}
+
+/* Only the potion in the hotbar is clickable for drinking */
+.hotbar-slot .potion-in-slot {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* Spell effect particles falling over Steve (after drinking) */
+.spell-particle {
+    position: absolute;
+    width: 1.15vh;
+    height: 1.15vh;
+    image-rendering: pixelated;
+    pointer-events: none;
+    z-index: 7;
+    opacity: 1;
+    transition: transform 2.6s linear, opacity 2.6s ease-in, left 2.6s ease-in-out;
+}
+
+/* Conjugate Steve: twin mirrored across the real axis (z*) */
+.steve-conjugate-img {
+    display: none;
+    opacity: 0.7;
+}
+
+.steve-conjugate-img.revealed {
+    display: block;
+}
+
+/* 镜像奔跑图：只有 revealed（已激活）+ show（奔跑帧）同时存在才显示，
+   否则站立状态会误显示奔跑图 */
+.steve-conjugate-img.steve-run-img.revealed {
+    display: none;
+}
+
+.steve-conjugate-img.steve-run-img.revealed.show {
+    display: block;
+}
+
+/* Second line of the coord label: z* = a - bi */
+#coord-conj {
+    margin-top: 0.6vh;
+}
+
+/* The snowflake in the hotbar can be dragged */
+.hotbar-slot .snow-in-slot {
+    pointer-events: auto;
+    cursor: grab;
+}
+
+/* Ghost image following the pointer while dragging the snowflake */
+.snow-drag-ghost {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 70;
+    image-rendering: pixelated;
+}
+
+.potion-fly {
+    position: fixed;
+    z-index: 60;
+    pointer-events: none;
+    transition: left 0.8s ease-in-out, top 0.8s ease-in-out, height 0.8s ease-in-out;
+}
+
 .steve-sprite {
     position: absolute;
     left: 50%;
@@ -1446,6 +1621,11 @@ body.chinese .home-title {
     opacity: 1;
 }
 
+/* level2：portal 一开始就可见（level1 是碰到才显形的彩蛋） */
+.level2-page .nether-portal-sprite {
+    opacity: 1;
+}
+
 .steve-sprite.steve-sneaking {
     height: 6.5vh;
 }
@@ -1458,6 +1638,10 @@ body.chinese .home-title {
 
 .steve-run-img.show {
     display: block;
+}
+
+.steve-sprite.steve-hidden {
+    visibility: hidden;
 }
 
 .win-overlay {
@@ -1640,6 +1824,19 @@ body.chinese .home-title {
     white-space: nowrap;
 }
 
+.system-toast-line.white-line {
+    color: white;
+}
+
+/* Tips toast: 字号比通用 system 弹窗大一号，文字整体下移 */
+#tips-toast .system-toast-line {
+    font-size: 2.8vh;
+}
+
+#tips-toast .system-toast-text {
+    transform: translateY(0.8vh);
+}
+
 /* Long-text variant: allows wrapping, taller bg */
 .system-toast.long-text {
     width: 62vh;
@@ -1651,8 +1848,8 @@ body.chinese .home-title {
 
 .system-toast.long-text .system-toast-line {
     white-space: normal;
-    font-size: 2.2vh;
-    line-height: 2;
+    font-size: 2.6vh;
+    line-height: 1.6;
 }
 
 .system-toast.long-text .system-toast-line.white-line {
@@ -1660,7 +1857,7 @@ body.chinese .home-title {
 }
 
 .system-toast.long-text .system-toast-text {
-    padding: 0 2.5vh 0 6.5vh;
+    padding: 0.4vh 2.5vh 0 6.5vh;
 }
 
 
