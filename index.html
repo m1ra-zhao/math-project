@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complex Numbers</title>
 
-    <link rel="stylesheet" href="style.css?v=20260924-2">
+    <link rel="stylesheet" href="style.css?v=20260926f">
 </head>
 
 <body>
@@ -27,7 +27,7 @@
             <h1>COMPLEX NUMBERS</h1>
         </div>
 
-        <button onclick="window.location.href='wiki.html'">
+        <button onclick="window.location.href='wiki.html?v=2'">
             <span>LEARN</span>
         </button>
 
@@ -87,7 +87,7 @@
         <div class="news-timeline">
             <div class="news-entry">
                 <div class="news-date">26.9.26</div>
-                <div class="news-update">Adjusted some parameters in level 2. Optimized game experience.</div>
+                <div class="news-update">Adjusted some parameters in level 2. Optimized game experience.<br>Updated Complex Number Wiki.</div>
             </div>
             <div class="news-entry">
                 <div class="news-date">26.9.25</div>
@@ -287,7 +287,7 @@
 
     <script>
         // 更新日期：每次在 What's New 新增内容时更新这个值
-        const NEWS_UPDATED = "2026-09-26v1";
+        const NEWS_UPDATED = "2026-09-26v2";
 
         // 初始化：如果用户没读过当前版本的 news，显示 more 徽标
         (function() {
@@ -1363,6 +1363,43 @@
 
     }
 
+    </script>
+
+    <div id="cookie-consent" class="cookie-consent">
+        <div class="cookie-consent-text">
+            <div class="cookie-consent-title">Cookies!</div>
+            <div class="cookie-consent-desc">This website stores cookies on your device to save your progress and keep the game running smoothly.</div>
+        </div>
+        <div class="cookie-consent-buttons">
+            <button id="cookie-accept" type="button"><span>Accept All Cookies</span></button>
+            <button id="cookie-reject" type="button"><span>Reject</span></button>
+        </div>
+    </div>
+
+    <script>
+    // Cookie 同意弹窗：首次打开（或版本更新后首次打开）时从底部弹出
+    // 以后更新了这个功能想重新让所有用户看到，把 v1 改成 v2 即可
+    (function() {
+        const CONSENT_KEY = "cookie_consent_v1";
+        const banner = document.getElementById("cookie-consent");
+        if (!banner) return;
+
+        if (!localStorage.getItem(CONSENT_KEY)) {
+            setTimeout(() => banner.classList.add("show"), 600);
+        }
+
+        function closeBanner(choice) {
+            if (choice === "rejected") {
+                // 拒绝：清空本地缓存，只保留选择记录本身
+                localStorage.clear();
+            }
+            localStorage.setItem(CONSENT_KEY, choice);
+            banner.classList.remove("show");
+        }
+
+        document.getElementById("cookie-accept").addEventListener("click", () => closeBanner("accepted"));
+        document.getElementById("cookie-reject").addEventListener("click", () => closeBanner("rejected"));
+    })();
     </script>
 
 </body>

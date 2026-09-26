@@ -16,9 +16,16 @@
     };
     </script>
 
+    <script>
+    // 刷新时固定回页面最顶部，不恢复上次滚动位置/锚点
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    window.addEventListener('load', () => window.scrollTo(0, 0));
+    </script>
+
     <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260926n">
 </head>
 
 <body class="wiki-page">
@@ -47,7 +54,17 @@
         <div class="sub-items">
             <a href="#introduction">Introduction</a>
             <a href="#imaginary-unit">Imaginary Unit</a>
+            <a href="#conjugate">Conjugate</a>
             <a href="#complex-plane">Complex Plane</a>
+        </div>
+    </details>
+
+    <details>
+        <summary>Polar Equations</summary>
+
+        <div class="sub-items">
+            <a href="#polar-form">Polar Form</a>
+            <a href="#polar-coordinates">Polar Coordinates</a>
         </div>
     </details>
 
@@ -88,15 +105,6 @@
     </details>
 
     <details>
-        <summary>Polar Equations</summary>
-
-        <div class="sub-items">
-            <a href="#polar-form">Polar Form</a>
-            <a href="#polar-coordinates">Polar Coordinates</a>
-        </div>
-    </details>
-
-    <details>
         <summary>Extension</summary>
 
         <div class="sub-items">
@@ -115,9 +123,11 @@
             <h3 id="introduction">Introduction</h3>
             <p>
                 A <strong>complex number</strong> is a number that can be expressed in the form
-                \(a + bi\), where \(a\) and \(b\) are real numbers, and \(i\) is the imaginary unit.
-                \(a\) is called the <strong>real part</strong>, and \(b\) is called the
-                <strong>imaginary part</strong>.
+                \(z = a + bi\), where \(a\) and \(b\) are real numbers, and \(i\) is the imaginary unit.
+                \(a\) is the real part, written as \(\mathrm{Re}(z)\); \(b\) is the imaginary part,
+                written as \(\mathrm{Im}(z)\). Notice that \(b\) is a real number. It is called the
+                imaginary part only when it is multiplied by \(i\). If \(b = 0\), \(z\) is just a
+                real number.
             </p>
 
             <h3 id="imaginary-unit">Imaginary Unit</h3>
@@ -125,38 +135,72 @@
                 The imaginary unit \(i\) represents \(\sqrt{-1}\), so \(i^2 = -1\).
             </p>
 
+            <h3 id="conjugate">Conjugate</h3>
+            <div class="equation-block">
+                \[
+                \begin{aligned}
+                z &= a + bi \\
+                z^* &= a - bi
+                \end{aligned}
+                \]
+            </div>
+            <p>
+                Here z and z* are conjugates. They are formed by flipping the sign of the imaginary part.
+            </p>
+
             <h3 id="complex-plane">Complex Plane</h3>
             <p>
                 Complex plane is composed of three structures: horizontal x-axis is the real axis showing the real part of a complex number; vertical y-axis is the imaginary axis showing the imaginary part of a complex number; origin is the point \((0,0)\) where two axis cross.
             </p>
-            
+
+
+            <h2>Polar Equations</h2>
+
+            <h3 id="polar-form">Polar Form</h3>
+            <div class="equation-block polar-block">
+            \[
+            z = r(\cos\theta + i\sin\theta)
+            \]
+            </div>
+
+            <h3 id="polar-coordinates">Polar Coordinates</h3>
+            <div class="equation-block polar-block">
+            \[
+            x = r\cos\theta, \quad y = r\sin\theta
+            \]
+            </div>
+            <div class="equation-block polar-block">
+            \[
+            r = \sqrt{x^2 + y^2}, \quad \tan\theta = \frac{y}{x}
+            \]
+            </div>
 
             <h2 id="operations">Operations</h2>
 
             <h3 id="cartesian-form">Cartesian Form</h3>
             
-            <h3 id="addition">Addition</h3>
+            <h4 id="addition">Addition</h4>
             <div class="equation-block">
             \[
             (a + bi) + (c + di) = (a + c) + i(b + d)
             \]
             </div>
 
-            <h3 id="subtraction">Subtraction</h3>
+            <h4 id="subtraction">Subtraction</h4>
             <div class="equation-block">
             \[
             (a + bi) - (c + di) = (a - c) + i(b - d)
             \]
             </div>
 
-            <h3 id="multiplication">Multiplication</h3>
+            <h4 id="multiplication">Multiplication</h4>
             <div class="equation-block">
             \[
             (a + bi)(c + di) = (ac - bd) + i(ad + bc)
             \]
             </div>
 
-            <h3 id="division">Division</h3>
+            <h4 id="division">Division</h4>
             <div class="equation-block">
             \[
             \frac{a + bi}{c + di} = \frac{(a + bi)(c - di)}{(c + di)(c - di)} = \frac{ac + bd}{c^2 + d^2} + i\frac{bc - ad}{c^2 + d^2}
@@ -182,44 +226,65 @@
             \]
             </div>
 
-            <h3 id="trigonometric-form-addition">Addition</h3>
+            <h4 id="trigonometric-form-addition">Addition</h4>
             <div class="equation-block">
             \[
             z_1 + z_2 = r_1(\cos\theta_1 + i\sin\theta_1) + r_2(\cos\theta_2 + i\sin\theta_2)
             \]
             </div>
 
-            <h3 id="trigonometric-form-subtraction">Subtraction</h3>
+            <h4 id="trigonometric-form-subtraction">Subtraction</h4>
             <div class="equation-block">
             \[
             z_1 - z_2 = r_1(\cos\theta_1 + i\sin\theta_1) - r_2(\cos\theta_2 + i\sin\theta_2)
             \]
             </div>
 
-            <h3 id="trigonometric-form-multiplication">Multiplication</h3>
+            <h4 id="trigonometric-form-multiplication">Multiplication</h4>
             <div class="equation-block">
             \[
             z_1 z_2 = r_1 r_2\big(\cos(\theta_1 + \theta_2) + i\sin(\theta_1 + \theta_2)\big)=r_1r_2cis(\theta_1+\theta_2)
             \]
             </div>
 
-            <h3 id="trigonometric-form-division">Division</h3>
+            <h4 id="trigonometric-form-division">Division</h4>
             <div class="equation-block">
             \[
-            \frac{z_1}{z_2} = \frac{r_1}{r_2}\big(\cos(\theta_1 - \theta_2) + i\sin(\theta_1 - \theta_2)\big)
+            \frac{z_1}{z_2} = \frac{r_1}{r_2}\big(\cos(\theta_1 - \theta_2) + i\sin(\theta_1 - \theta_2)\big) = \frac{r_1}{r_2}\,\mathrm{cis}(\theta_1 - \theta_2)
             \]
             </div>
 
             <h2 id="de-moivre">De Moivre's Theorem</h2>
 
             <h3 id="formula">The Formula</h3>
+            <p>
+                De Moivre states that for any real number \(x\) and integer \(n\):
+            </p>
             <div class="equation-block de-moivre-block">
             \[
             (\cos\theta + i\sin\theta)^n = \cos(n\theta) + i\sin(n\theta)
             \]
             </div>
+            <p>
+                De Moivre's theorem is an extension of multiplication. It can be
+                represented as two complex number multiply together.
+            </p>
+            <div class="equation-block de-moivre-block">
+            \[
+            (\cos x + i\sin x)(\cos x + i\sin x) = \cos(x+x) + i\sin(x+x) = \cos 2x + i\sin 2x
+            \]
+            </div>
+            <p>
+                If you do this for \(n\) times, you are adding the angle \(x\) for
+                \(n\) times. Therefore, raising the expression to \(n\) power is
+                simply multiplying the angle by \(n\).
+            </p>
 
             <h3 id="powers">Powers</h3>
+            <p>
+                Similar to the original form, you simply need to raise the magnitude
+                to the \(n\)-th power as well which is \(r^n\).
+            </p>
             <div class="equation-block de-moivre-block">
             \[
             z^n = r^n \left(\cos(n\theta) + i\sin(n\theta)\right)
@@ -234,27 +299,18 @@
             \right), \quad k = 0, 1, 2, \dots, n-1
             \]
             </div>
-
-            <h2>Polar Equations</h2>
-
-            <h3 id="polar-form">Polar Form</h3>
-            <div class="equation-block polar-block">
-            \[
-            z = r(\cos\theta + i\sin\theta)
-            \]
-            </div>
-
-            <h3 id="polar-coordinates">Polar Coordinates</h3>
-            <div class="equation-block polar-block">
-            \[
-            x = r\cos\theta, \quad y = r\sin\theta
-            \]
-            </div>
-            <div class="equation-block polar-block">
-            \[
-            r = \sqrt{x^2 + y^2}, \quad \tan\theta = \frac{y}{x}
-            \]
-            </div>
+            <p>
+                According to fundamental algebra, any non-zero number has exactly \(n\)
+                distinct \(n\)-th roots. For instance, what is \(\sqrt[3]{8}\), you will
+                answer 2. But 2 is only one root of it, the other two are complex number.
+                The root is a reverse of multiplication. \(z^n = r\) and
+                \(z = \sqrt[n]{r}\). For argument, we use \(n\) to multiply the angle in
+                multiplication. Here, we do it inversely by dividing \(n\) to the angle,
+                \(\varphi = \theta/n\). But this can only give out one angle. We need to
+                add \(2\pi k\) on it. Knowing that adding a full rotation of
+                \(2\pi\) (\(360^\circ\)) will lands at the same spot, there will exist
+                different angle when you divided by \(n\).
+            </p>
 
             <h2>Extension</h2>
 
@@ -263,10 +319,44 @@
 
         <!-- RIGHT: EMPTY -->
         <aside class="wiki-right">
-
+            <div class="wiki-note">
+                <div class="wiki-note-title">Example:</div>
+                <p>
+                    Suppose \(n = 3\) and \(\theta = 0^\circ\)<br>
+                    First root (\(k = 0\))<br>
+                    \(\dfrac{0^\circ}{3} = 0^\circ\)<br>
+                    Second root (\(k = 1\))<br>
+                    \(\dfrac{0^\circ + 360^\circ}{3} = 120^\circ\)<br>
+                    Third root (\(k = 2\))<br>
+                    \(\dfrac{0^\circ + 720^\circ}{3} = 240^\circ\)<br>
+                    And what if we keep going?<br>
+                    Fourth root (\(k = 3\))<br>
+                    \(\dfrac{0^\circ + 1080^\circ}{3} = 360^\circ = 0^\circ\)
+                </p>
+                <p>
+                    This is because the number of \(k\) is equal to \(n\). There will
+                    simply be adding \(360^\circ\) to the original angle which is the
+                    exact same angle. That's why we only need \(k = 0, 1, 2, \dots, n-1\).
+                </p>
+            </div>
         </aside>
 
     </div>
+
+    <script>
+    // 让右栏 Example 注释与正文 Roots 小节垂直对齐
+    function alignWikiNote() {
+        const note = document.querySelector('.wiki-note');
+        const roots = document.getElementById('roots');
+        const right = document.querySelector('.wiki-right');
+        if (!note || !roots || !right) return;
+        const delta = roots.getBoundingClientRect().top - right.getBoundingClientRect().top;
+        note.style.marginTop = Math.max(0, delta) + 'px';
+    }
+    window.addEventListener('load', alignWikiNote);
+    window.addEventListener('resize', alignWikiNote);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(alignWikiNote);
+    </script>
 
 </body>
 </html>

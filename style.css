@@ -1189,7 +1189,7 @@ body.chinese .home-title {
 /* WIKI TITLE */
 
 .wiki-header {
-    padding: 0;
+    padding: 7.5vh 0 0;
 }
 
 .wiki-header-top {
@@ -1197,6 +1197,7 @@ body.chinese .home-title {
     top: 0;
     left: 0;
     width: 100vw;
+    min-height: 6.5vh;
     z-index: 1000;
 
     background: rgba(255, 255, 255, 0.96);
@@ -1231,7 +1232,7 @@ body.chinese .home-title {
 
     color: black;
     font-family: Minecraft, sans-serif;
-    font-size: 42px;
+    font-size: 56px;
 
     text-shadow: none;
 }
@@ -1915,6 +1916,89 @@ body.chinese .home-title {
     padding: 4vh 6vw;
 }
 
+/* Cookie 同意弹窗（底部，MC 风格） */
+.cookie-consent {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: translateY(180%);
+    z-index: 900;
+
+    display: flex;
+    align-items: center;
+    gap: 2vw;
+
+    width: 100%;
+    padding: 1.6vh 3vw;
+    box-sizing: border-box;
+
+    background: rgba(17, 17, 17, 0.95);
+    border-top: 3px solid #ffffff;
+
+    text-align: left;
+
+    transition: transform 0.5s ease-out;
+}
+
+.cookie-consent.show {
+    transform: translateY(0);
+}
+
+.cookie-consent-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.cookie-consent-title {
+    margin-bottom: 0.8vh;
+
+    color: #ffff55;
+    font-family: Minecraft, sans-serif;
+    font-size: 2.6vh;
+
+    text-shadow: 0.2vh 0.2vh 0 #555555;
+}
+
+.cookie-consent-desc {
+    color: white;
+    font-family: Minecraft, sans-serif;
+    font-size: 1.9vh;
+    line-height: 1.35;
+
+    text-shadow: 0.15vh 0.15vh 0 #555555;
+}
+
+.cookie-consent-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 1.6vh;
+    flex-shrink: 0;
+}
+
+.cookie-consent-buttons button {
+    width: 30vh;
+    height: 6.2vh;
+    margin: 0;
+
+    font-size: 2.4vh;
+}
+
+.cookie-consent-buttons button span {
+    top: 0.9vh;
+}
+
+/* 锚点定位时给固定顶栏留出空间，避免标题被遮住 */
+.wiki-main h2,
+.wiki-main h3 {
+    scroll-margin-top: 7vh;
+}
+
+.wiki-main h4 {
+    scroll-margin-top: 7vh;
+}
+
 .wiki-main h2 {
     margin-top: 0;
 
@@ -2002,6 +2086,36 @@ body.chinese .home-title {
     grid-column: 3;
 
     border-left: 1px solid #cccccc;
+}
+
+/* 右栏注释块（与正文小节对应的例子） */
+.wiki-note {
+    padding: 2vh 1.2vw;
+    text-align: left;
+    font-size: 0.9em;
+    line-height: 1.9;
+}
+
+/* Example 小标题：比三级标题的蓝青色浅一号 */
+.wiki-note-title {
+    margin-bottom: 0.8vh;
+
+    color: #82a9c5;
+    font-family: Minecraft, sans-serif;
+    font-size: 17px;
+
+    text-shadow: none;
+}
+
+.wiki-note p {
+    margin: 0 0 1.2vh;
+
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.9;
+
+    text-shadow: none;
 }
 
 /* LINES UNDER HEADINGS */
@@ -2112,7 +2226,7 @@ body.chinese .home-title {
 
     color: #5a5a5a !important;
     font-family: Minecraft, sans-serif;
-    font-size: 22px;
+    font-size: 24px;
 
     text-shadow: none;
 }
@@ -2123,21 +2237,7 @@ body.chinese .home-title {
 
     color: #2f6f9f !important;
     font-family: Minecraft, sans-serif;
-    font-size: 18px;
+    font-size: 20px;
 
     text-shadow: none;
-}
-
-.wiki-main h3[id$="addition"],
-.wiki-main h3[id$="subtraction"],
-.wiki-main h3[id$="multiplication"],
-.wiki-main h3[id$="division"],
-.wiki-main h3[id="de-moivre"],
-.wiki-main h3[id="formula"],
-.wiki-main h3[id="powers"],
-.wiki-main h3[id="roots"],
-.wiki-main h3[id="polar-form"],
-.wiki-main h3[id="polar-coordinates"],
-.wiki-main h3[id="polar-equations"] {
-    color: #2f6f9f !important;
 }
