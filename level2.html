@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Level 2</title>
-    <link rel="stylesheet" href="style.css?v=20260925q">
+    <link rel="stylesheet" href="style.css?v=20260926q">
 </head>
 <body class="level-page level2-page">
     <div class="level-page-inner">
@@ -199,7 +199,7 @@
             const slot = document.createElement('div');
             slot.className = 'hotbar-slot';
             const slotImg = document.createElement('img');
-            slotImg.src = 'pngs/slot.png';
+            slotImg.src = 'pngs/hotbar_offhand_right.png';
             slotImg.alt = '';
             slot.appendChild(slotImg);
             if (i === 0) slot.appendChild(potionInSlot);
@@ -240,10 +240,10 @@
                 fly.remove();
                 potionInSlot.classList.add('show');
                 advancementToast.classList.add('show');
-                // 停留 1 秒后弹回
+                // 停留 2 秒后弹回
                 setTimeout(() => {
                     advancementToast.classList.remove('show');
-                }, 1000);
+                }, 2000);
             }, { once: true });
         }
 

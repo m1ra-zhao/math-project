@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complex Numbers</title>
 
-    <link rel="stylesheet" href="style.css?v=20260926f">
+    <link rel="stylesheet" href="style.css?v=20260926g">
 </head>
 
 <body>
@@ -87,7 +87,7 @@
         <div class="news-timeline">
             <div class="news-entry">
                 <div class="news-date">26.9.26</div>
-                <div class="news-update">Adjusted some parameters in level 2. Optimized game experience.<br>Updated Complex Number Wiki.</div>
+                <div class="news-update">Adjusted some parameters in level 2. Optimized game experience.<br>Updated Complex Number Wiki.<br>Updated level 3.<br>Changed hotbar textures.</div>
             </div>
             <div class="news-entry">
                 <div class="news-date">26.9.25</div>
@@ -204,12 +204,13 @@
                 <span>Level 1</span>
                 <span class="level-passed-badge">Passed</span>
             </button>
-            <button id="level2-game-btn" onclick="window.location.href='level2.html?v=29'" class="game-level-btn">
+            <button id="level2-game-btn" onclick="window.location.href='level2.html?v=36'" class="game-level-btn">
                 <span>Level 2</span>
                 <span class="level-passed-badge">Passed</span>
             </button>
-            <button onclick="showPage('home-page')" class="game-level-btn">
+            <button id="level3-game-btn" onclick="window.location.href='level3.html?v=15'" class="game-level-btn">
                 <span>Level 3</span>
+                <span class="level-passed-badge">Passed</span>
             </button>
             <button onclick="showPage('home-page')" class="game-level-btn">
                 <span>Level 4</span>
@@ -287,7 +288,7 @@
 
     <script>
         // 更新日期：每次在 What's New 新增内容时更新这个值
-        const NEWS_UPDATED = "2026-09-26v2";
+        const NEWS_UPDATED = "2026-09-26v4";
 
         // 初始化：如果用户没读过当前版本的 news，显示 more 徽标
         (function() {
@@ -363,10 +364,11 @@
         }
 
         async function restoreLevel1PassedBadge() {
-            // 并行获取两个关卡的通关状态，同一帧切换，保证 Passed 徽章闪烁同步
+            // 并行获取三个关卡的通关状态，同一帧切换，保证 Passed 徽章闪烁同步
             const results = await Promise.all([
                 fetchPassedState("level1-game-btn", "level1_passed"),
-                fetchPassedState("level2-game-btn", "level2_passed")
+                fetchPassedState("level2-game-btn", "level2_passed"),
+                fetchPassedState("level3-game-btn", "level3_passed")
             ]);
             results.forEach(({ levelButton, passed }) => {
                 if (levelButton) levelButton.classList.toggle("is-passed", passed);
@@ -1063,6 +1065,7 @@
         localStorage.removeItem("advancement_toast_seen");
         localStorage.removeItem("level1_passed");
         localStorage.removeItem("level2_passed");
+        localStorage.removeItem("level3_passed");
 
         if (supabaseClient) {
             const { data: sessionData } = await supabaseClient.auth.getSession();
@@ -1092,6 +1095,11 @@
                         },
                         {
                             key: `${userId}:level2_passed`,
+                            value: false,
+                            updated_at: new Date().toISOString()
+                        },
+                        {
+                            key: `${userId}:level3_passed`,
                             value: false,
                             updated_at: new Date().toISOString()
                         }

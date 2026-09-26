@@ -1463,7 +1463,8 @@ body.chinese .home-title {
     position: fixed;
     left: 50%;
     bottom: 1.5vh;
-    transform: translateX(-50%);
+    /* 槽位贴图左侧有 7/24 的透明列，右移半个透明宽让可见内容回到屏幕中心 */
+    transform: translateX(calc(-50% + 9vh * 7 / 48));
     display: flex;
     opacity: 0;
     pointer-events: none;
@@ -1475,9 +1476,20 @@ body.chinese .home-title {
     opacity: 1;
 }
 
+/* Level 3：槽位需要可点击选中（level2 的物品栏只是展示，保持不可点） */
+.hotbar.clickable .hotbar-slot {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
 .hotbar-slot {
     position: relative;
     height: 9vh;
+}
+
+/* 贴图左侧有 7/24 透明列（9vh × 7/24 ≈ 2.63vh），精确负边距让格子边框相接 */
+.hotbar .hotbar-slot + .hotbar-slot {
+    margin-left: calc(-9vh * 7 / 24);
 }
 
 .hotbar-slot img {
@@ -1487,10 +1499,49 @@ body.chinese .home-title {
     image-rendering: pixelated;
 }
 
+/* 选中框：叠加在槽位上的白色粗边框（中间透明），MC 原版式 1:1 覆盖
+   selection 内框（16x16）对齐槽位内部区左上角：
+   left = 9vh*(9.5-4)/24（内框左缘重合），top = 9vh*0.5/24（内框顶缘重合） */
+.hotbar-slot .slot-selection {
+    position: absolute;
+    left: calc(9vh * 5.5 / 24);
+    top: calc(9vh * 0.5 / 24);
+    width: 9vh;
+    height: calc(9vh * 23 / 24);
+    display: none;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.hotbar-slot.selected .slot-selection {
+    display: block;
+}
+
+/* level3：成就弹窗左部的物品图标（拾取黑曜石时） */
+.advancement-toast .advancement-toast-item-icon {
+    display: none;
+    position: absolute;
+    left: 3vh;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 4.6vh;
+    width: auto;
+    image-rendering: pixelated;
+}
+
+.advancement-toast.with-icon .advancement-toast-item-icon {
+    display: block;
+}
+
+/* 图标占位：文字整体右移避开图标 */
+.advancement-toast.with-icon .advancement-toast-text {
+    padding-left: 9.5vh;
+}
+
 .hotbar-slot .potion-in-slot,
 .hotbar-slot .snow-in-slot {
     position: absolute;
-    left: 50%;
+    left: calc(50% + 9vh * 7 / 48);
     top: 50%;
     transform: translate(-50%, -50%);
     width: auto;
@@ -1979,7 +2030,8 @@ body.chinese .home-title {
 
 .cookie-consent-buttons button {
     width: 30vh;
-    height: 6.2vh;
+    height: 7.5vh;
+    max-height: 60px;
     margin: 0;
 
     font-size: 2.4vh;
@@ -2116,6 +2168,156 @@ body.chinese .home-title {
     line-height: 1.9;
 
     text-shadow: none;
+}
+
+/* ============ LEVEL 3 ============ */
+
+/* 白色背景 */
+.level3-page {
+    background: #ffffff;
+}
+
+/* 虚轴范围扩大到 ±20i，数轴高度相应加倍 */
+.level3-page .number-line {
+    height: calc(var(--imaginary-unit, 10.5vw) * 40 + 12vh);
+    min-height: 2560px;
+}
+
+/* 虚轴轴线同样延长到 ±20i（通用样式只画了 ±10） */
+.level3-page .imaginary-axis {
+    height: calc(var(--imaginary-unit) * 20 + 5vh);
+}
+
+/* 世界中的宝藏（挖到才显示） */
+.treasure-sprite {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    height: 5.5vh;
+    width: auto;
+    z-index: 5;
+    visibility: hidden;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+.treasure-sprite.revealed {
+    visibility: visible;
+}
+
+.treasure-sprite.picked {
+    visibility: hidden;
+}
+
+/* 破损的 portal（始终可见，位于 6 - 8i），高度为史蒂夫的 4 倍 */
+.ruined-portal-sprite {
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    height: 36vh;
+    width: auto;
+    transform-origin: bottom center;
+    z-index: 7;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+/* 物品栏通用槽位内容物（罗盘/镐子/宝藏图标）
+   left 加半个透明宽（9vh × 7/48），让物品对齐可见格子的中心 */
+.hotbar-slot .slot-item {
+    position: absolute;
+    left: calc(50% + 9vh * 7 / 48);
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: 56%;
+    width: auto;
+}
+
+/* 镐子稍大一号，作为耐久条宽度参照 */
+.hotbar-slot .pickaxe-in-slot {
+    height: 64%;
+}
+
+/* 宝藏图标初始隐藏，飞入后才显示 */
+.hotbar-slot .treasure-in-slot {
+    visibility: hidden;
+}
+
+.hotbar-slot .treasure-in-slot.show {
+    visibility: visible;
+}
+
+/* 镐子耐久条：green_progress 叠在 green_background 上，
+   每用一次 progress 宽度减少 1/5 */
+.durability-bar {
+    position: absolute;
+    left: calc(50% + 9vh * 7 / 48);
+    bottom: 8%;
+    transform: translateX(-50%);
+    /* 与镐子（9vh × 64%）等宽 */
+    width: calc(9vh * 0.64);
+    height: 12%;
+}
+
+.durability-bar img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+/* 罗盘悬浮窗：选中槽位 1 时显示在物品栏上方，黑底白字 */
+.compass-tooltip {
+    position: fixed;
+    left: 50%;
+    bottom: 12.5vh;
+    transform: translate(-50%, 2vh);
+    z-index: 45;
+
+    max-width: 80vw;
+    padding: 1.4vh 2.4vh;
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    font-family: Minecraft, sans-serif;
+    font-size: 2.2vh;
+    line-height: 1.4;
+    text-align: center;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.compass-tooltip.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* 挖空提示：屏幕中间粗体，渐显停留 3 秒后渐隐 */
+.no-treasure-banner {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 120;
+
+    color: #111111;
+    font-family: Minecraft, sans-serif;
+    font-weight: bold;
+    font-size: clamp(36px, 6vw, 84px);
+    white-space: nowrap;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.no-treasure-banner.show {
+    opacity: 1;
 }
 
 /* LINES UNDER HEADINGS */
