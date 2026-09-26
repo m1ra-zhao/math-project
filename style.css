@@ -1258,7 +1258,7 @@ body.chinese .home-title {
 
 /* Level 2: gray background */
 .level2-page {
-    background: #818181;
+    background: #c0c0c0;
 }
 
 .number-line-wrap {
@@ -1500,9 +1500,9 @@ body.chinese .home-title {
     height: 68%;
 }
 
-/* Snowflake icon twice as large */
+/* Snowflake icon: half the potion-slot baseline */
 .hotbar-slot .snow-in-slot {
-    height: 136%;
+    height: 68%;
 }
 
 .hotbar-slot .potion-in-slot.show,
@@ -1618,11 +1618,6 @@ body.chinese .home-title {
 }
 
 .nether-portal-sprite.revealed {
-    opacity: 1;
-}
-
-/* level2：portal 一开始就可见（level1 是碰到才显形的彩蛋） */
-.level2-page .nether-portal-sprite {
     opacity: 1;
 }
 

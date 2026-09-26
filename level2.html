@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Level 2</title>
-    <link rel="stylesheet" href="style.css?v=20260925n">
+    <link rel="stylesheet" href="style.css?v=20260925q">
 </head>
 <body class="level-page level2-page">
     <div class="level-page-inner">
@@ -85,9 +85,9 @@
 
         const netherPortal = document.getElementById('nether-portal');
         if (netherPortal) {
-            // -1 - 6i：x=-1，虚部 -6（屏幕坐标向下为正）
-            const portalX = -1 * unitPx;
-            const portalY = 6 * unitPx;
+            // -5 - 5i：x=-5，虚部 -5（屏幕坐标向下为正）
+            const portalX = -5 * unitPx;
+            const portalY = 5 * unitPx;
             netherPortal.style.transform = `translate(calc(-50% + ${portalX}px), ${portalY}px)`;
         }
 
@@ -240,10 +240,10 @@
                 fly.remove();
                 potionInSlot.classList.add('show');
                 advancementToast.classList.add('show');
-                // 与 level1 一致：停留 5 秒后弹回
+                // 停留 1 秒后弹回
                 setTimeout(() => {
                     advancementToast.classList.remove('show');
-                }, 5000);
+                }, 1000);
             }, { once: true });
         }
 
@@ -271,13 +271,13 @@
             potionInSlot.classList.remove('show');
             startSpellParticles();
 
-            // 粒子持续 10 秒后停止，物品栏才出现雪花
+            // 粒子持续 5 秒后停止，物品栏才出现雪花
             setTimeout(() => {
                 stopSpellParticles();
                 snowInSlot.classList.add('show');
                 // 雪花出现 90 秒仍未生成 conjugate 则弹出提示
                 tipsToastTimer = setTimeout(showTipsToast, 90000);
-            }, 10000);
+            }, 5000);
         });
 
         // ---- Snowflake spell particles (spell_0..7 frames alternating) ----
@@ -408,6 +408,8 @@
                     if (tipsToastTimer) { clearTimeout(tipsToastTimer); tipsToastTimer = null; }
                     if (tipsToast) tipsToast.classList.remove('show');
                     if (steveConjugate) steveConjugate.classList.add('revealed');
+                    // 镜像史蒂夫出现后 portal 才显现
+                    if (netherPortal) netherPortal.classList.add('revealed');
                     updateSteveSprite();
                     // 雪花已使用，从物品栏消失
                     snowInSlot.classList.remove('show');
@@ -415,8 +417,8 @@
                     if (imaginaryAxisNeg) imaginaryAxisNeg.classList.add('imaginary-axis-visible');
                     if (doubleMeToast) {
                         doubleMeToast.classList.add('show');
-                        // 与 level1 一致：停留 5 秒后弹回
-                        setTimeout(() => doubleMeToast.classList.remove('show'), 5000);
+                        // 停留 2 秒后弹回
+                        setTimeout(() => doubleMeToast.classList.remove('show'), 2000);
                     }
                     updateSteveCoordLabel(posY + jumpOffset);
                 }
