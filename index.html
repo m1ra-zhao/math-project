@@ -272,6 +272,9 @@
             <div id="level-reset-list" class="level-reset-list" style="display: none;">
                 <div id="level-reset-scroll-area" class="level-reset-scroll-area">
                     <div class="level-reset-item" role="button" tabindex="0" onclick="resetLevelProgress('level1')">Level 1</div>
+                    <div class="level-reset-item" role="button" tabindex="0" onclick="resetLevelProgress('level2')">Level 2</div>
+                    <div class="level-reset-item" role="button" tabindex="0" onclick="resetLevelProgress('level3')">Level 3</div>
+                    <div class="level-reset-item" role="button" tabindex="0" onclick="resetLevelProgress('level4')">Level 4</div>
                 </div>
                 <div id="level-reset-scroll-track" class="level-reset-scroll-track">
                     <img id="level-reset-scroller" src="pngs/scroller.png" alt="" class="level-reset-scroller">
@@ -1130,8 +1133,45 @@
     }
 
     async function resetLevelProgress(levelId) {
-        if (levelId !== "level1") return;
-        await resetProgress();
+        // 每关只重置自己的通关状态（level1 另含本关的小游戏标志）
+        const extraKeys = {
+            level1: ["imaginary_axis_revealed", "steve_has_jumped", "advancement_toast_seen"],
+            level2: [],
+            level3: [],
+            level4: []
+        }[levelId];
+        if (!extraKeys) return;
+
+        const flagName = `${levelId}_passed`;
+        localStorage.removeItem(flagName);
+        extraKeys.forEach((k) => localStorage.removeItem(k));
+
+        if (supabaseClient) {
+            const { data: sessionData } = await supabaseClient.auth.getSession();
+            const userId = sessionData && sessionData.session && sessionData.session.user
+                ? sessionData.session.user.id
+                : null;
+
+            if (userId) {
+                const rows = [
+                    { key: `${userId}:${flagName}`, value: false, updated_at: new Date().toISOString() }
+                ];
+                extraKeys.forEach((k) => {
+                    localStorage.removeItem(`${userId}:${k}`);
+                    rows.push({ key: `${userId}:${k}`, value: false, updated_at: new Date().toISOString() });
+                });
+                const { error } = await supabaseClient.from("app_state").upsert(rows);
+                if (error) {
+                    alert("Unable to reset shared progress. Please try again.");
+                    return;
+                }
+            }
+        }
+
+        await restoreLevel1PassedBadge();
+        document.getElementById("reset-progress-page").style.display = "none";
+        document.getElementById("options-page").style.display = "block";
+        alert("Progress reset.");
     }
 
     async function addComment() {
