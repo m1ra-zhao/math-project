@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Level 3</title>
-    <link rel="stylesheet" href="style.css?v=20260926q">
+    <link rel="stylesheet" href="style.css?v=20260926y">
 </head>
 <body class="level-page level3-page">
     <div class="level-page-inner">
@@ -468,11 +468,58 @@
 
         // ---- Portal 激活与通关判定 ----
         let portalActivated = false;
+        let portalConsuming = false;
         let portalDwellStart = null;
         let portalHintCooldownUntil = 0;
 
         function allTreasuresCollected() {
             return treasures.every((t) => t.collected);
+        }
+
+        // 材料消耗动画：物品栏的 flint/iron/obsidian 依次飞向 portal 并消失，
+        // 三样全部到达后，破损 portal 才换成激活的 portal
+        function consumeMaterialsAndActivatePortal() {
+            portalConsuming = true;
+
+            const portalRect = ruinedPortal.getBoundingClientRect();
+            const targetX = portalRect.left + portalRect.width / 2;
+            const targetY = portalRect.top + portalRect.height / 2;
+
+            let arrivedCount = 0;
+            treasures.forEach((t, index) => {
+                const slotImg = treasureSlotImgs[index];
+                const rect = slotImg.getBoundingClientRect();
+
+                // 槽位图标立即隐藏，由同位置起飞的飞行副本代替
+                slotImg.classList.remove('show');
+
+                const fly = document.createElement('img');
+                fly.src = t.src;
+                fly.className = 'potion-fly';
+                fly.style.left = rect.left + 'px';
+                fly.style.top = rect.top + 'px';
+                fly.style.height = rect.height + 'px';
+                document.body.appendChild(fly);
+
+                // 依次起飞，间隔 0.2s
+                setTimeout(() => {
+                    fly.style.left = (targetX - rect.width / 2) + 'px';
+                    fly.style.top = (targetY - rect.height / 2) + 'px';
+                }, index * 200);
+
+                fly.addEventListener('transitionend', () => {
+                    fly.remove();
+                    arrivedCount += 1;
+                    if (arrivedCount === treasures.length) {
+                        // 全部材料到位：破损 portal 变成激活的 portal
+                        setTimeout(() => {
+                            portalActivated = true;
+                            ruinedPortal.style.visibility = 'hidden';
+                            netherPortal.classList.add('revealed');
+                        }, 200);
+                    }
+                }, { once: true });
+            });
         }
 
         function playerInPortalArea(insetXRatio, insetYRatio) {
@@ -505,12 +552,10 @@
                 return;
             }
 
-            if (allTreasuresCollected() && playerInPortalArea(0.15, 0.05)) {
-                // 材料齐了：破损 portal 换成激活的 portal
-                portalActivated = true;
-                ruinedPortal.style.visibility = 'hidden';
-                netherPortal.classList.add('revealed');
-            } else if (!allTreasuresCollected() && playerInPortalArea(0.15, 0.05)) {
+            if (!portalConsuming && allTreasuresCollected() && playerInPortalArea(0.15, 0.05)) {
+                // 材料齐了：三样材料飞向 portal，全部到达后才激活
+                consumeMaterialsAndActivatePortal();
+            } else if (!portalConsuming && !allTreasuresCollected() && playerInPortalArea(0.15, 0.05)) {
                 // 材料不够：重新提示（8 秒节流）
                 const now = performance.now();
                 if (now >= portalHintCooldownUntil) {

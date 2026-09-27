@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Level 2</title>
-    <link rel="stylesheet" href="style.css?v=20260926q">
+    <link rel="stylesheet" href="style.css?v=20260926y">
 </head>
 <body class="level-page level2-page">
     <div class="level-page-inner">
@@ -53,8 +53,8 @@
     <div id="tips-toast" class="system-toast">
         <img src="pngs/system.png" alt="" class="system-toast-bg">
         <div class="system-toast-text">
-            <div class="system-toast-line">Tips!</div>
-            <div class="system-toast-line white-line">Try to create a<br>conjugate!</div>
+            <div class="system-toast-line">Hint!</div>
+            <div class="system-toast-line white-line">Don't you think this<br>snowflake looks like a "*"?</div>
         </div>
     </div>
 
@@ -204,9 +204,17 @@
             slot.appendChild(slotImg);
             if (i === 0) slot.appendChild(potionInSlot);
             if (i === 1) slot.appendChild(snowInSlot);
+            // 选中高亮层（和 level3 一致的白色框）
+            const slotSel = document.createElement('img');
+            slotSel.src = 'pngs/hotbar_selection.png';
+            slotSel.alt = '';
+            slotSel.className = 'slot-selection';
+            slot.appendChild(slotSel);
             hotbar.appendChild(slot);
             slotEls.push(slot);
         }
+        // 开启槽位点击（level3 同款交互）
+        hotbar.classList.add('clickable');
 
         function pickUpPotion() {
             if (potionPicked) return;
@@ -257,13 +265,20 @@
             }
         }
 
-        // ---- Drink the potion by clicking it in the hotbar ----
+        // ---- Hotbar: 点击槽位或按数字键 1-9 选中，再点击屏幕 = 使用 ----
         const drinkSound = new Audio('Drink.ogg.mp3');
         let potionDrunk = false;
 
-        potionInSlot.addEventListener('click', () => {
+        let selectedSlot = null;
+        function setSelectedSlot(idx) {
+            selectedSlot = idx;
+            slotEls.forEach((el, i) => el.classList.toggle('selected', i === idx));
+        }
+
+        function drinkPotion() {
             if (potionDrunk) return;
             potionDrunk = true;
+            setSelectedSlot(null);
 
             drinkSound.currentTime = 0;
             drinkSound.play();
@@ -275,9 +290,29 @@
             setTimeout(() => {
                 stopSpellParticles();
                 snowInSlot.classList.add('show');
-                // 雪花出现 90 秒仍未生成 conjugate 则弹出提示
-                tipsToastTimer = setTimeout(showTipsToast, 90000);
+                // 雪花出现 60 秒仍未生成 conjugate 则弹出提示
+                tipsToastTimer = setTimeout(showTipsToast, 60000);
             }, 5000);
+        }
+
+        // 点击槽位切换选中（雪花拖拽后的误触 click 会被抑制）
+        slotEls.forEach((el, i) => el.addEventListener('click', (event) => {
+            event.stopPropagation();
+            if (snowDragMoved) { snowDragMoved = false; return; }
+            setSelectedSlot(selectedSlot === i ? null : i);
+        }));
+
+        // 数字键 1-9 切换选中
+        document.addEventListener('keydown', (event) => {
+            if (event.key >= '1' && event.key <= '9') {
+                const idx = Number(event.key) - 1;
+                setSelectedSlot(selectedSlot === idx ? null : idx);
+            }
+        });
+
+        // 选中槽位后点击屏幕 = 使用（药水 = 喝；雪花靠拖拽到 z 使用，点屏幕无效果）
+        document.addEventListener('click', () => {
+            if (selectedSlot === 0) drinkPotion();
         });
 
         // ---- Snowflake spell particles (spell_0..7 frames alternating) ----
@@ -344,13 +379,17 @@
             });
         }
 
-        // ---- Tips toast: snowflake unused for 90s -> hint ----
+        // ---- Tips toast: snowflake unused for 60s -> hint ----
         const tipsToast = document.getElementById('tips-toast');
         let tipsToastTimer = null;
         let tipsToastTimeout = null;
         let tipsToastShown = false;
+        // 调试开关：true = 弹窗固定显示在右上角，方便改参数；调完改回 false
+        const HINT_FORCE_SHOW = true;
+        if (HINT_FORCE_SHOW && tipsToast) tipsToast.classList.add('show');
 
         function showTipsToast() {
+            if (HINT_FORCE_SHOW) return;
             if (!tipsToast || tipsToastShown || conjugateRevealed) return;
             tipsToastShown = true;
             tipsToast.classList.add('show');
@@ -379,9 +418,14 @@
             snowDragGhost.style.top = `${event.clientY}px`;
         }
 
+        let snowDragMoved = false;
+
         snowInSlot.addEventListener('pointerdown', (event) => {
             if (conjugateRevealed) return;
+            // 只响应左键：右键不启动拖拽（否则右键的 pointerup 会被上下文菜单吞掉，ghost 残留导致 duplicate）
+            if (event.button !== 0) return;
             event.preventDefault();
+            snowDragMoved = false;
             snowInSlot.setPointerCapture(event.pointerId);
 
             snowDragGhost = document.createElement('img');
@@ -389,10 +433,17 @@
             snowDragGhost.className = 'snow-drag-ghost';
             snowDragGhost.style.height = `${snowInSlot.getBoundingClientRect().height}px`;
             document.body.appendChild(snowDragGhost);
-            moveSnowGhost(event);
+            moveSnowGhost(event, true);
         });
 
         snowInSlot.addEventListener('pointermove', moveSnowGhost);
+
+        function moveSnowGhost(event, isInitial) {
+            if (!snowDragGhost) return;
+            if (!isInitial) snowDragMoved = true;
+            snowDragGhost.style.left = `${event.clientX}px`;
+            snowDragGhost.style.top = `${event.clientY}px`;
+        }
 
         function endSnowDrag(event) {
             if (!snowDragGhost) return;
@@ -411,8 +462,9 @@
                     // 镜像史蒂夫出现后 portal 才显现
                     if (netherPortal) netherPortal.classList.add('revealed');
                     updateSteveSprite();
-                    // 雪花已使用，从物品栏消失
+                    // 雪花已使用，从物品栏消失并取消选中
                     snowInSlot.classList.remove('show');
+                    if (selectedSlot === 1) setSelectedSlot(null);
                     // 出现镜像史蒂夫时才显示负虚数轴
                     if (imaginaryAxisNeg) imaginaryAxisNeg.classList.add('imaginary-axis-visible');
                     if (doubleMeToast) {

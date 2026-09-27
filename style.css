@@ -419,6 +419,9 @@ p {
 
     text-align: center;
 
+    /* 内容超长时菜单自身滚动（否则滚轮会穿透到底层页面） */
+    overflow-y: auto;
+
     padding-top: 120px;
 
     box-sizing: border-box;
@@ -1875,13 +1878,34 @@ body.chinese .home-title {
     color: white;
 }
 
-/* Tips toast: 字号比通用 system 弹窗大一号，文字整体下移 */
-#tips-toast .system-toast-line {
+/* Tips toast（仅 level2 的 Hint 弹窗）: 字号比通用 system 弹窗大一号，文字整体下移 */
+.level2-page #tips-toast .system-toast-line {
     font-size: 2.8vh;
 }
 
-#tips-toast .system-toast-text {
+/* 白色正文比黄色标题小一号 */
+.level2-page #tips-toast .system-toast-line.white-line {
+    font-size: 2.4vh;
+}
+
+.level2-page #tips-toast .system-toast-text {
     transform: translateY(0.8vh);
+    /* 行距比通用弹窗大 0.2vh */
+    gap: 0.95vh;
+}
+
+/* level3 的开场 Tips 弹窗: 黄色标题比通用 system 弹窗大 2 号，文字整体下移 0.3vh */
+.level3-page #tips-toast .system-toast-line {
+    font-size: 3vh;
+}
+
+/* 白色正文保持默认字号 */
+.level3-page #tips-toast .system-toast-line.white-line {
+    font-size: 2.6vh;
+}
+
+.level3-page #tips-toast .system-toast-text {
+    transform: translateY(0.5vh);
 }
 
 /* Long-text variant: allows wrapping, taller bg */
@@ -2318,6 +2342,180 @@ body.chinese .home-title {
 
 .no-treasure-banner.show {
     opacity: 1;
+}
+
+/* ===== LEVEL 4 ===== */
+
+/* ±1500 数轴：单位长度和 level3 一样（420vw / 40），所以整条轴是 level3 的 75 倍长 */
+.level4-page .number-line {
+    width: calc(420vw * 75);
+    min-width: 180000px;
+    height: calc(var(--imaginary-unit, 10.5vw) * 3000 + 12vh);
+    min-height: 181000px;
+}
+
+/* 虚轴轴线延长到 ±1500i */
+.level4-page .imaginary-axis {
+    height: calc(var(--imaginary-unit) * 1500 + 5vh);
+}
+
+/* |z| 和 θ 两行的行距是普通的 1.5 倍 */
+.level4-page #coord-mod,
+.level4-page #coord-arg {
+    line-height: 1.5;
+}
+
+/* 屏幕边缘坐标刻度尺：实部贴上/下边（下方时在 hotbar 上方），虚部贴左/右边 */
+.coord-ruler {
+    position: fixed;
+    z-index: 15;
+    pointer-events: none;
+    color: #111111;
+    font-family: Minecraft, sans-serif;
+    font-size: clamp(14px, 2.2vh, 24px);
+    line-height: 1;
+}
+
+.ruler-tick {
+    position: absolute;
+    background: #111111;
+    visibility: hidden;
+}
+
+.ruler-label {
+    position: absolute;
+    white-space: nowrap;
+    visibility: hidden;
+}
+
+/* 实部尺：短竖线 + 数字 */
+.coord-ruler-x {
+    left: 0;
+    right: 0;
+    height: 4vh;
+}
+
+/* 下方时贴页面最底边（层级在 hotbar 之下，允许与物品栏重叠） */
+.coord-ruler-x.at-bottom {
+    bottom: 0;
+}
+
+.coord-ruler-x.at-top {
+    top: 1vh;
+}
+
+.coord-ruler-x .ruler-tick {
+    width: 2px;
+    height: 1.2vh;
+    transform: translateX(-50%);
+}
+
+.coord-ruler-x.at-bottom .ruler-tick {
+    bottom: 0;
+}
+
+.coord-ruler-x.at-top .ruler-tick {
+    top: 0;
+}
+
+.coord-ruler-x .ruler-label {
+    transform: translateX(-50%);
+}
+
+.coord-ruler-x.at-bottom .ruler-label {
+    bottom: 1.6vh;
+}
+
+.coord-ruler-x.at-top .ruler-label {
+    top: 1.6vh;
+}
+
+/* 虚部尺：短横线 + 数字 */
+.coord-ruler-y {
+    top: 0;
+    bottom: 0;
+    width: 6vh;
+}
+
+.coord-ruler-y.at-left {
+    left: 0;
+}
+
+.coord-ruler-y.at-right {
+    right: 0;
+}
+
+.coord-ruler-y .ruler-tick {
+    width: 1.2vh;
+    height: 2px;
+    transform: translateY(-50%);
+}
+
+.coord-ruler-y.at-left .ruler-tick {
+    left: 0;
+}
+
+.coord-ruler-y.at-right .ruler-tick {
+    right: 0;
+}
+
+.coord-ruler-y .ruler-label {
+    /* 数字相对刻度垂直居中后再往下 0.6vh */
+    transform: translateY(calc(-50% + 0.6vh));
+}
+
+.coord-ruler-y.at-left .ruler-label {
+    left: 1.8vh;
+}
+
+.coord-ruler-y.at-right .ruler-label {
+    right: 1.8vh;
+}
+
+/* theta 物品框：固定在左上角坐标下方，初始隐藏。
+   三层叠放：item_frame 打底，theta 居中可旋转，hotbar_selection 作最外框 */
+.theta-frame {
+    position: fixed;
+    left: 4vw;
+    top: 19vh;
+    width: 9vh;
+    height: 9vh;
+    z-index: 20;
+
+    display: none;
+    cursor: pointer;
+}
+
+.theta-frame.show {
+    display: block;
+}
+
+.theta-frame img {
+    position: absolute;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+.theta-frame .theta-frame-inner {
+    left: 50%;
+    top: 50%;
+    width: 86%;
+    height: 86%;
+    transform: translate(-50%, -50%);
+}
+
+.theta-frame .theta-frame-theta {
+    left: 50%;
+    top: 50%;
+    width: 55%;
+    height: 55%;
+}
+
+.theta-frame .theta-frame-border {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
 }
 
 /* LINES UNDER HEADINGS */
