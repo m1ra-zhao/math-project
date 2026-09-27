@@ -385,7 +385,7 @@
         let tipsToastTimeout = null;
         let tipsToastShown = false;
         // 调试开关：true = 弹窗固定显示在右上角，方便改参数；调完改回 false
-        const HINT_FORCE_SHOW = true;
+        const HINT_FORCE_SHOW = false;
         if (HINT_FORCE_SHOW && tipsToast) tipsToast.classList.add('show');
 
         function showTipsToast() {
