@@ -1878,20 +1878,31 @@ body.chinese .home-title {
     color: white;
 }
 
-/* Tips toast（仅 level2 的 Hint 弹窗）: 字号比通用 system 弹窗大一号，文字整体下移 */
-.level2-page #tips-toast .system-toast-line {
+/* Tips toast（仅 level2 的 Hint 弹窗）: 字号比通用 system 弹窗大一号，文字整体下移（含固定预览弹窗） */
+.level2-page #tips-toast .system-toast-line,
+.level2-page #tips-toast-preview .system-toast-line {
     font-size: 2.8vh;
 }
 
 /* 白色正文比黄色标题小一号 */
-.level2-page #tips-toast .system-toast-line.white-line {
-    font-size: 2.4vh;
+.level2-page #tips-toast .system-toast-line.white-line,
+.level2-page #tips-toast-preview .system-toast-line.white-line {
+    font-size: 2.0vh;
 }
 
-.level2-page #tips-toast .system-toast-text {
+.level2-page #tips-toast .system-toast-text,
+.level2-page #tips-toast-preview .system-toast-text {
     transform: translateY(0.8vh);
     /* 行距比通用弹窗大 0.2vh */
     gap: 0.95vh;
+}
+
+/* 弹窗里的星号用 Arial 字体显示，并抬高到文字上半部（Arial 的 * 默认贴基线） */
+.level2-page #tips-toast .font-star,
+.level2-page #tips-toast-preview .font-star {
+    font-family: Arial, sans-serif;
+    display: inline-block;
+    transform: translateY(-1.1vh);
 }
 
 /* level3 的开场 Tips 弹窗: 黄色标题比通用 system 弹窗大 2 号，文字整体下移 0.3vh */

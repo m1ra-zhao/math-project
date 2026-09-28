@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Level 2</title>
-    <link rel="stylesheet" href="style.css?v=20260926y">
+    <link rel="stylesheet" href="style.css?v=20260927m">
 </head>
 <body class="level-page level2-page">
     <div class="level-page-inner">
@@ -54,7 +54,17 @@
         <img src="pngs/system.png" alt="" class="system-toast-bg">
         <div class="system-toast-text">
             <div class="system-toast-line">Hint!</div>
-            <div class="system-toast-line white-line">Don't you think this<br>snowflake looks like a "*"?</div>
+            <div class="system-toast-line white-line">Don't you think this<br>snowflake looks like a "<span class="font-star">*</span>"?</div>
+        </div>
+    </div>
+
+    <!-- 第二阶段提示：首个 hint 弹回后 15s 仍未生成 conjugate 则弹出，3s 自动弹回 -->
+    <div id="tips-toast-preview" class="system-toast">
+        <img src="pngs/system.png" alt="" class="system-toast-bg">
+        <div class="system-toast-text">
+            <div class="system-toast-line">Hint!</div>
+            <div class="system-toast-line white-line">Where do you write a <span class="font-star">*</span> ...?</div>
+            <div class="system-toast-line white-line">Drag the snowflake to ...</div>
         </div>
     </div>
 
@@ -290,8 +300,8 @@
             setTimeout(() => {
                 stopSpellParticles();
                 snowInSlot.classList.add('show');
-                // 雪花出现 60 秒仍未生成 conjugate 则弹出提示
-                tipsToastTimer = setTimeout(showTipsToast, 60000);
+                // 雪花出现 15 秒仍未生成 conjugate 则弹出提示
+                tipsToastTimer = setTimeout(showTipsToast, 15000);
             }, 5000);
         }
 
@@ -379,11 +389,14 @@
             });
         }
 
-        // ---- Tips toast: snowflake unused for 60s -> hint ----
+        // ---- Tips toast: snowflake unused for 20s -> hint ----
         const tipsToast = document.getElementById('tips-toast');
+        const secondToast = document.getElementById('tips-toast-preview');
         let tipsToastTimer = null;
         let tipsToastTimeout = null;
         let tipsToastShown = false;
+        let secondTipsTimer = null;
+        let secondTipsShown = false;
         // 调试开关：true = 弹窗固定显示在右上角，方便改参数；调完改回 false
         const HINT_FORCE_SHOW = false;
         if (HINT_FORCE_SHOW && tipsToast) tipsToast.classList.add('show');
@@ -398,6 +411,15 @@
                 tipsToast.classList.remove('show');
                 document.removeEventListener('click', dismissTipsToast);
                 if (tipsToastTimeout) clearTimeout(tipsToastTimeout);
+                // 首个 hint 弹回后 15s 仍未生成 conjugate → 第二阶段提示，3s 自动弹回
+                if (!conjugateRevealed && !secondTipsShown) {
+                    secondTipsTimer = setTimeout(() => {
+                        if (conjugateRevealed || secondTipsShown) return;
+                        secondTipsShown = true;
+                        secondToast.classList.add('show');
+                        setTimeout(() => secondToast.classList.remove('show'), 3000);
+                    }, 15000);
+                }
             };
             document.addEventListener('click', dismissTipsToast);
             tipsToastTimeout = setTimeout(dismissTipsToast, 10000);
@@ -455,9 +477,11 @@
                     event.clientY >= rect.top && event.clientY <= rect.bottom;
                 if (droppedOnZ) {
                     conjugateRevealed = true;
-                    // 生成 conjugate 后取消 Tips 提示
+                    // 生成 conjugate 后取消所有 Tips 提示
                     if (tipsToastTimer) { clearTimeout(tipsToastTimer); tipsToastTimer = null; }
+                    if (secondTipsTimer) { clearTimeout(secondTipsTimer); secondTipsTimer = null; }
                     if (tipsToast) tipsToast.classList.remove('show');
+                    if (secondToast) secondToast.classList.remove('show');
                     if (steveConjugate) steveConjugate.classList.add('revealed');
                     // 镜像史蒂夫出现后 portal 才显现
                     if (netherPortal) netherPortal.classList.add('revealed');
